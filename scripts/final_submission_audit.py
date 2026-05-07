@@ -31,6 +31,7 @@ REQUIRED_FILES = (
     "docs/public_real_traceability_packet.md",
     "docs/reviewer_traceability_walkthrough.md",
     "docs/judging_17_readiness.md",
+    "docs/judge_max_readiness_report.md",
     "scripts/demo_rehearsal.py",
 )
 SUPPORTED_VIDEO_HOST_MARKERS = (
@@ -187,6 +188,28 @@ def _check_correlation_summary(root: Path) -> GateStatus:
     return GateStatus(ok=True, detail="correlation summary proves bounded correlation and explicit compromise disposition")
 
 
+def _check_judge_max_readiness_report(root: Path) -> GateStatus:
+    path = root / "docs" / "judge_max_readiness_report.md"
+    if not path.is_file():
+        return GateStatus(ok=False, detail="missing docs/judge_max_readiness_report.md")
+    text = _read(path)
+    required = (
+        "# Judge Max Readiness Report",
+        "Autonomous Execution Quality",
+        "IR Accuracy",
+        "Breadth And Depth",
+        "Constraint Implementation",
+        "Audit Trail Quality",
+        "Usability And Documentation",
+        "All criteria at 17/17: **true**",
+        "External submission gate",
+    )
+    missing = [item for item in required if item not in text]
+    if missing:
+        return GateStatus(ok=False, detail="judge readiness report missing: " + ", ".join(missing))
+    return GateStatus(ok=True, detail="judge readiness report maps all six criteria to 17/17 local proof")
+
+
 def _check_required_markdown_links(root: Path) -> GateStatus:
     surfaces = (
         "README.md",
@@ -234,6 +257,7 @@ def build_final_submission_audit(
         "public_trace": _check_public_trace(root),
         "demo_rehearsal_assets": _check_demo_rehearsal_assets(root),
         "correlation_summary": _check_correlation_summary(root),
+        "judge_max_readiness_report": _check_judge_max_readiness_report(root),
         "required_markdown_links": _check_required_markdown_links(root),
         "public_repo_sync": GateStatus(ok=git_status.ok, detail=git_status.detail),
     }

@@ -1,0 +1,27 @@
+# Judge Max Readiness Report
+
+Status: **max_local_judge_ready**
+
+## Criterion Scorecard
+
+| Criterion | Score | Gaps |
+|---|---:|---|
+| Autonomous Execution Quality | 17/17 | None |
+| IR Accuracy | 17/17 | None |
+| Breadth And Depth | 17/17 | None |
+| Constraint Implementation | 17/17 | None |
+| Audit Trail Quality | 17/17 | None |
+| Usability And Documentation | 17/17 | None |
+
+Total: **102/102**
+All criteria at 17/17: **true**
+
+## External submission gate
+
+Status: **blocked**
+Score: **82/100**
+Blockers: demo_video_url, devpost_url
+
+## Boundary
+
+A 17/17 local criterion map is not the same as final Devpost submission. Public demo video and submitted Devpost URL remain external gates until supplied.

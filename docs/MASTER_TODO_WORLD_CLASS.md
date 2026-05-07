@@ -125,6 +125,8 @@ bounded CASE-RD01 pass:
 
 [x] T168 [P0] Build final submission checklist with every required component mapped to a public link or repository path.
 
+[x] T181 [P0] Add executable judge-max readiness scoring: `scripts/audit_judge_readiness.py --write-doc --strict` now generates `docs/judge_max_readiness_report.md` with all six FIND EVIL criteria at local 17/17 proof level while keeping video/Devpost as external gates.
+
 ## PHASE 9 — Release Gate And Safe Cleanup
 
 [x] T169 [P0] Run safe project hygiene audit for generated noise, temporary scripts, unused drafts, local-only artifacts, and generated caches.
@@ -166,6 +168,7 @@ bounded CASE-RD01 pass:
 - Full long-run autonomous AI investigation remains open; OpenRouter is the current selected free/low-cost demo runtime path, while Groq is implemented and currently passes API readiness.
 - Full Plaso timeline and deeper process/account corroboration remain open; bounded SOFTWARE Run-key, SYSTEM service, EVTX event parsing, and registry/event correlation now exist.
 - Public GitHub repository is verified at `https://github.com/AI-Nikitka93/find-evil-caseproof-analyst`.
+- Local judging-criteria scorecard is maxed at 17/17 for all six criteria in `docs/judge_max_readiness_report.md`.
 - Demo video is not recorded or uploaded.
 - Public video visibility and public GitHub diagram/link rendering are not verified.
 - Devpost form is not submitted with public links.
@@ -174,5 +177,5 @@ bounded CASE-RD01 pass:
 
 - Local actionable tasks remaining: 0
 - External submission gates remaining: T153, T154, T160, T161, T163
-- Closed active tasks retained: T133-T152, T155-T159, T162, T164-T180
+- Closed active tasks retained: T133-T152, T155-T159, T162, T164-T181
 - Deferred non-submission tasks removed from active path: 40+

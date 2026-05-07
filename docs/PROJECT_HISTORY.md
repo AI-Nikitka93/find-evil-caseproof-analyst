@@ -3,6 +3,17 @@
 ## 2026-05-07
 
 Дата и время: 2026-05-07
+Роль: P-JUDGE-MAX / P-VERIFY
+Сделано: Added an executable FIND EVIL judge-readiness scorecard instead of relying on prose-only 17/17 claims. `src/judge_readiness.py` scores all six official criteria, `scripts/audit_judge_readiness.py` regenerates `docs/judge_max_readiness_report.md`, and `scripts/final_submission_audit.py` now requires that report as part of the local package. README, final submission package, readiness audit, go/no-go board, master TODO, and state were updated to route judges to the new proof map while still separating external video and Devpost gates.
+Изменены файлы: `src/judge_readiness.py`, `scripts/audit_judge_readiness.py`, `scripts/final_submission_audit.py`, `tests/test_judge_readiness.py`, `tests/test_final_submission_audit.py`, `docs/judge_max_readiness_report.md`, `README.md`, `docs/final_submission_package.md`, `docs/submission_readiness_audit.md`, `docs/final_release_go_no_go_2026-05-07.md`, `docs/MASTER_TODO_WORLD_CLASS.md`, `docs/STATE.md`, `docs/state.json`, `docs/PROJECT_HISTORY.md`
+Результат/доказательство: `py -m pytest tests\test_judge_readiness.py tests\test_final_submission_audit.py -q` -> 9 passed; `py scripts\audit_judge_readiness.py --write-doc --json --strict` -> status `max_local_judge_ready`, all six criteria 17/17, total 102/102; final submission remains externally blocked until public demo video and Devpost URLs exist.
+Локальный account context: без изменений
+Локальная карта секретов: без изменений
+Следующий шаг: Run full verification, commit/push the judge-readiness package, record/upload the public terminal demo, then run final submission audit with real URLs.
+
+## 2026-05-07
+
+Дата и время: 2026-05-07
 Роль: P-SUBMISSION-PACKAGE / P-VERIFY
 Сделано: Processed the focused remaining submission TODOs into a final local package without pretending external publication is complete. Added reviewer traceability walkthrough, final quality gate matrix, Devpost-ready English submission text, demo video script, judge try-it-out and recovery guide, public release manifest, and final go/no-go board. Updated README, architecture, submission readiness audit, master TODO, state/state.json, project map, and release-control audit so the new final docs are part of the checked release contract. Left external gates open for public GitHub publication, actual demo video recording/upload, public video visibility, GitHub diagram rendering, and final public link audit.
 Изменены файлы: `README.md`, `docs/architecture.md`, `docs/submission_readiness_audit.md`, `docs/reviewer_traceability_walkthrough.md`, `docs/final_quality_gate_matrix.md`, `docs/final_submission_package.md`, `docs/demo_video_script.md`, `docs/judge_try_it_out.md`, `docs/public_release_manifest.md`, `docs/final_release_go_no_go_2026-05-07.md`, `scripts/audit_release_controls.py`, `tests/test_release_controls.py`, `docs/MASTER_TODO_WORLD_CLASS.md`, `docs/STATE.md`, `docs/state.json`, `docs/PROJECT_MAP.md`, `docs/PROJECT_HISTORY.md`

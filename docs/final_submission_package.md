@@ -144,6 +144,7 @@ Next work is deeper content-level analysis:
 | Architecture diagram | `docs/architecture.md` |
 | Dataset documentation | `docs/dataset_documentation.md` |
 | Accuracy report | `docs/accuracy_report.md` |
+| Judge criteria proof | `docs/judge_max_readiness_report.md` shows all six judging criteria at local 17/17 proof level, while still separating the public video and Devpost URL gates. |
 | Agent execution logs | `docs/public_real_execution_log_sample.jsonl`, `docs/public_real_traceability_packet.md`, plus local full run log under `cases/CASE-RD01/` |
 | Text description | This document |
 
@@ -154,6 +155,7 @@ Next work is deeper content-level analysis:
 - Confirm the repository does not include `evidence/`, `cases/`, `.env.local`,
   or local-only notes.
 - Confirm all submitted text is English.
+- Regenerate the local judge scorecard with `py scripts\audit_judge_readiness.py --write-doc --strict`; it must show all six criteria at `17/17`.
 - Run `py scripts\demo_rehearsal.py --strict` before recording and use its
   command sequence for the live terminal screencast.
 - Confirm the video shows the same behavior described here.

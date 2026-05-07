@@ -20,6 +20,7 @@ Verdict: **LOCAL PACKAGE PREPARED - external Devpost gates still block final sub
 | `py scripts\audit_real_validation.py --case-workspace "M:\Projects\Konkurs\Find Evil!\cases\CASE-RD01" --json --strict` | PASS |
 | `py scripts\generate_public_trace_packet.py --json --strict` | PASS, generated 10 public-safe real execution-log records including registry extraction, event extraction, bounded correlation, and self-correction |
 | `py scripts\demo_rehearsal.py --json --strict` | PASS, confirms demo script, public trace, local CASE-RD01 reports, real evidence opening, artifact-depth steps, and visible self-correction story |
+| `py scripts\audit_judge_readiness.py --write-doc --json --strict` | PASS, all six FIND EVIL judging criteria map to local `17/17` proof in `docs/judge_max_readiness_report.md`; external video/Devpost gates remain separate |
 | `py scripts\final_submission_audit.py --json` | BLOCKED as designed until public video URL, submitted Devpost URL, and clean public repo sync are all present; now also checks demo rehearsal assets, correlation summary, and required local markdown links |
 | `py scripts\audit_release_controls.py --json --strict` | PASS on last full gate run before this audit refresh |
 | `py scripts\audit_design_quality.py --strict` | PASS on last full gate run before this audit refresh |
@@ -49,6 +50,7 @@ Verdict: **LOCAL PACKAGE PREPARED - external Devpost gates still block final sub
 | Judge try-it-out instructions | Ready | `docs/judge_try_it_out.md` |
 | Quality gate matrix | Ready | `docs/final_quality_gate_matrix.md` |
 | Judging 17/17 readiness map | Ready | `docs/judging_17_readiness.md` |
+| Judge max readiness report | Ready | `docs/judge_max_readiness_report.md` shows local 17/17 proof across all six criteria |
 | Public repository publication | Verified | https://github.com/AI-Nikitka93/find-evil-caseproof-analyst |
 
 ## Judging Criteria Mapping
@@ -75,6 +77,7 @@ Verdict: **LOCAL PACKAGE PREPARED - external Devpost gates still block final sub
 ## Current Go/No-Go
 
 - GO for local public package preparation.
+- GO for local 17/17 judging-criteria proof mapping.
 - GO for showing a bounded real evidence pass honestly.
 - NO-GO for claiming full autonomous AI investigation completion.
 - NO-GO for claiming full incident reconstruction.

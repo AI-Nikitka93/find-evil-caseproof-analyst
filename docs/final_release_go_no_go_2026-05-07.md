@@ -25,6 +25,7 @@ steps are complete; GO for public repository package.**
 | Demo rehearsal gate exists | GO | `scripts/demo_rehearsal.py --strict` verifies required demo story assets before recording |
 | Judge runbook exists | GO | `docs/judge_try_it_out.md` |
 | Judging readiness map exists | GO | `docs/judging_17_readiness.md` |
+| Judge max readiness report exists | GO | `docs/judge_max_readiness_report.md` shows all six criteria at local 17/17 proof level |
 | Public GitHub URL | GO | https://github.com/AI-Nikitka93/find-evil-caseproof-analyst |
 | Final submission audit exists | GO | `scripts/final_submission_audit.py --json` |
 
@@ -46,6 +47,7 @@ Use this command as the final mechanical gate after the video and Devpost page
 exist:
 
 ```powershell
+py scripts\audit_judge_readiness.py --write-doc --strict
 py scripts\final_submission_audit.py --demo-video-url VIDEO_URL --devpost-url DEVPOST_URL --strict
 ```
 

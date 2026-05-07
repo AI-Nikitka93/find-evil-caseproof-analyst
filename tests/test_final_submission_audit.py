@@ -25,6 +25,18 @@ def _write_minimum_package(root: Path) -> None:
     (root / "docs" / "public_real_traceability_packet.md").write_text("trace\n", encoding="utf-8")
     (root / "docs" / "reviewer_traceability_walkthrough.md").write_text("walkthrough\n", encoding="utf-8")
     (root / "docs" / "judging_17_readiness.md").write_text("judging readiness\n", encoding="utf-8")
+    (root / "docs" / "judge_max_readiness_report.md").write_text(
+        "# Judge Max Readiness Report\n"
+        "Autonomous Execution Quality\n"
+        "IR Accuracy\n"
+        "Breadth And Depth\n"
+        "Constraint Implementation\n"
+        "Audit Trail Quality\n"
+        "Usability And Documentation\n"
+        "All criteria at 17/17: **true**\n"
+        "External submission gate\n",
+        encoding="utf-8",
+    )
     (root / "docs" / "demo_video_script.md").write_text(
         "live terminal execution\nreal evidence\nself-correction sequence\ntraceability chain\n",
         encoding="utf-8",
