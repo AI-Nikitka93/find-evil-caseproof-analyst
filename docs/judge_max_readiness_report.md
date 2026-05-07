@@ -19,7 +19,7 @@ All criteria at 17/17: **true**
 ## External submission gate
 
 Status: **blocked**
-Score: **82/100**
+Score: **83/100**
 Blockers: demo_video_url, devpost_url
 
 ## Boundary

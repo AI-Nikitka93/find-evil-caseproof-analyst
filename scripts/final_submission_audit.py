@@ -32,6 +32,9 @@ REQUIRED_FILES = (
     "docs/reviewer_traceability_walkthrough.md",
     "docs/judging_17_readiness.md",
     "docs/judge_max_readiness_report.md",
+    "docs/freshness_dependency_register_2026-05-06.md",
+    "docs/pre_release_freshness_checklist.md",
+    "docs/volatile_notes_update_cycle.md",
     "scripts/demo_rehearsal.py",
 )
 SUPPORTED_VIDEO_HOST_MARKERS = (
@@ -241,6 +244,36 @@ def _check_required_markdown_links(root: Path) -> GateStatus:
     return GateStatus(ok=True, detail="required README/submission/runbook markdown links resolve locally")
 
 
+def _check_freshness_surfaces(root: Path) -> GateStatus:
+    surfaces = (
+        "docs/freshness_dependency_register_2026-05-06.md",
+        "docs/pre_release_freshness_checklist.md",
+        "docs/volatile_notes_update_cycle.md",
+    )
+    stale_markers = (
+        "selected `.E01` file is not present locally",
+        "current local Windows environment lacks SIFT binaries",
+        "SIFT tool readiness is blocked",
+        "not pretending that a local real evidence image exists",
+        "file must still be downloaded",
+        "selected `.E01` is absent",
+    )
+    required_current_markers = (
+        "2026-05-07",
+        "base-rd-01-cdrive.E01",
+        "SIFT-compatible commands are available through WSL",
+        "mcp 1.27.0",
+    )
+    combined = "\n".join(_read(root / surface) for surface in surfaces if (root / surface).is_file())
+    stale = [marker for marker in stale_markers if marker.lower() in combined.lower()]
+    if stale:
+        return GateStatus(ok=False, detail="freshness docs contain stale blockers: " + ", ".join(stale))
+    missing = [marker for marker in required_current_markers if marker not in combined]
+    if missing:
+        return GateStatus(ok=False, detail="freshness docs missing current markers: " + ", ".join(missing))
+    return GateStatus(ok=True, detail="volatile contest/runtime assumptions are refreshed for current CASE-RD01 state")
+
+
 def build_final_submission_audit(
     *,
     root: Path = PROJECT_ROOT,
@@ -259,6 +292,7 @@ def build_final_submission_audit(
         "correlation_summary": _check_correlation_summary(root),
         "judge_max_readiness_report": _check_judge_max_readiness_report(root),
         "required_markdown_links": _check_required_markdown_links(root),
+        "freshness_surfaces": _check_freshness_surfaces(root),
         "public_repo_sync": GateStatus(ok=git_status.ok, detail=git_status.detail),
     }
     external_gates = {

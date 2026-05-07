@@ -41,6 +41,18 @@ def _write_package(root: Path) -> None:
         "autonomous_smoke_hardening_2026-05-07.md",
     ):
         (docs / name).write_text("evidence trace self-correction\n", encoding="utf-8")
+    freshness_text = (
+        "Checked: 2026-05-07\n"
+        "base-rd-01-cdrive.E01\n"
+        "SIFT-compatible commands are available through WSL\n"
+        "mcp 1.27.0\n"
+    )
+    for name in (
+        "freshness_dependency_register_2026-05-06.md",
+        "pre_release_freshness_checklist.md",
+        "volatile_notes_update_cycle.md",
+    ):
+        (docs / name).write_text(freshness_text, encoding="utf-8")
     (docs / "final_submission_package.md").write_text(
         "Repo https://github.com/AI-Nikitka93/find-evil-caseproof-analyst\n",
         encoding="utf-8",

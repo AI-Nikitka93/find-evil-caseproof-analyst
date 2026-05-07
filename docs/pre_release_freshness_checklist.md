@@ -1,6 +1,6 @@
 # Pre-Release Freshness Checklist
 
-Date: 2026-05-06
+Date: 2026-05-07
 
 Purpose: list external facts that must be rechecked before submission because they can change before judging.
 
@@ -16,6 +16,9 @@ Purpose: list external facts that must be rechecked before submission because th
 | Protocol SIFT install command | FIND EVIL Devpost resources | Resources page still references the Protocol SIFT package install command. |
 | Public repo license requirement | FIND EVIL Devpost overview | Public GitHub repository with MIT or Apache 2.0 license is required. |
 | AI runtime/provider constraints | Current local environment and provider docs | Must be rechecked before final demo to avoid surprise model or account changes. |
+| MCP Python SDK version | PyPI and local `py -m pip show mcp` | `mcp 1.27.0` is current for this project and installed locally; use a virtual environment to avoid unrelated package conflicts. |
+| Selected evidence presence | Local ignored `evidence/` folder and dataset docs | `base-rd-01-cdrive.E01` is present locally and remains excluded from the public repository. |
+| SIFT-compatible command surface | `py scripts\check_env.py --strict` | SIFT-compatible commands are available through WSL for current local validation. |
 
 ## Required Recheck Moments
 
@@ -57,6 +60,13 @@ Checked on 2026-05-06:
 - FIND EVIL overview: `https://findevil.devpost.com/`
 - FIND EVIL resources: `https://findevil.devpost.com/resources`
 - SIFT Workstation: `https://www.sans.org/tools/sift-workstation/`
+
+Refreshed on 2026-05-07:
+
+- FIND EVIL overview: `https://findevil.devpost.com/`
+- FIND EVIL rules: `https://findevil.devpost.com/rules`
+- Protocol SIFT repository HEAD: `40bed7a96bfd986ea048c3b2aeb9d788b2f3400c`
+- MCP Python SDK / PyPI: `mcp 1.27.0`
 
 ## No-Go Conditions
 

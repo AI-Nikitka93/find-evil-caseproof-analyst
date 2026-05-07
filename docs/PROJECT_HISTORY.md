@@ -3,6 +3,17 @@
 ## 2026-05-07
 
 Дата и время: 2026-05-07
+Роль: P-FRESHNESS-HARDENING / P-VERIFY
+Сделано: Refreshed live contest and ecosystem assumptions before final judging. Verified current FIND EVIL Devpost overview/rules, Protocol SIFT repository HEAD, MCP Python SDK `mcp 1.27.0`, local installed MCP version, selected CASE-RD01 evidence presence, and WSL SIFT-compatible command availability. Added a `freshness_surfaces` final-submission gate so stale volatile docs cannot quietly claim that `.E01` evidence is missing or that SIFT tools are blocked after the real bounded pass exists. Updated judge setup docs to recommend a virtual environment because unrelated local packages can pin a different MCP SDK version.
+Изменены файлы: `scripts/final_submission_audit.py`, `tests/test_final_submission_audit.py`, `tests/test_judge_readiness.py`, `README.md`, `docs/judge_try_it_out.md`, `docs/freshness_dependency_register_2026-05-06.md`, `docs/pre_release_freshness_checklist.md`, `docs/volatile_notes_update_cycle.md`, `docs/submission_readiness_audit.md`, `docs/judge_max_readiness_report.md`, `docs/PROJECT_HISTORY.md`
+Результат/доказательство: `py -m pip install -r requirements.txt` upgraded project runtime to `mcp 1.27.0`; `py -m pytest` -> 102 passed; `py scripts\audit_judge_readiness.py --write-doc --json --strict --assume-public-repo-sync` -> all six criteria 17/17, total 102/102; `py scripts\demo_rehearsal.py --json --strict` -> ready; `py scripts\audit_release_controls.py --json --strict` -> ok; `py scripts\check_env.py --strict` -> required SIFT commands found through WSL; `py -m src.agent --check-api` -> OpenRouter ready without printing secrets. `py scripts\final_submission_audit.py --json` blocks only on dirty worktree plus missing public video and Devpost URLs until this change is committed/pushed and external URLs exist.
+Локальный account context: OpenRouter and Groq readiness confirmed without printing key values; Anthropic remains configured but invalid for the current check.
+Локальная карта секретов: без изменений
+Следующий шаг: Commit/push this hardening pass, record/upload the public terminal demo, paste Devpost text, then run the final submission audit with real URLs.
+
+## 2026-05-07
+
+Дата и время: 2026-05-07
 Роль: P-JUDGE-MAX / P-VERIFY
 Сделано: Added an executable FIND EVIL judge-readiness scorecard instead of relying on prose-only 17/17 claims. `src/judge_readiness.py` scores all six official criteria, `scripts/audit_judge_readiness.py` regenerates `docs/judge_max_readiness_report.md`, and `scripts/final_submission_audit.py` now requires that report as part of the local package. README, final submission package, readiness audit, go/no-go board, master TODO, and state were updated to route judges to the new proof map while still separating external video and Devpost gates.
 Изменены файлы: `src/judge_readiness.py`, `scripts/audit_judge_readiness.py`, `scripts/final_submission_audit.py`, `tests/test_judge_readiness.py`, `tests/test_final_submission_audit.py`, `docs/judge_max_readiness_report.md`, `README.md`, `docs/final_submission_package.md`, `docs/submission_readiness_audit.md`, `docs/final_release_go_no_go_2026-05-07.md`, `docs/MASTER_TODO_WORLD_CLASS.md`, `docs/STATE.md`, `docs/state.json`, `docs/PROJECT_HISTORY.md`

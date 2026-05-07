@@ -21,13 +21,21 @@ Audience: FIND EVIL judges and practitioners testing the repository locally.
 
 ## Setup
 
+Use a fresh virtual environment for evaluation. The project currently targets
+`mcp 1.27.0`; a venv prevents unrelated local tools from forcing a different
+MCP SDK version.
+
 ```bash
+python -m venv .venv
+source .venv/bin/activate
 python -m pip install -r requirements.txt
 ```
 
 PowerShell fallback when `python` is not on `PATH`:
 
 ```powershell
+py -m venv .venv
+.\.venv\Scripts\Activate.ps1
 py -m pip install -r requirements.txt
 ```
 

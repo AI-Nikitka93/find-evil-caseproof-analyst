@@ -25,6 +25,27 @@ def _write_minimum_package(root: Path) -> None:
     (root / "docs" / "public_real_traceability_packet.md").write_text("trace\n", encoding="utf-8")
     (root / "docs" / "reviewer_traceability_walkthrough.md").write_text("walkthrough\n", encoding="utf-8")
     (root / "docs" / "judging_17_readiness.md").write_text("judging readiness\n", encoding="utf-8")
+    (root / "docs" / "freshness_dependency_register_2026-05-06.md").write_text(
+        "Checked: 2026-05-07\n"
+        "base-rd-01-cdrive.E01\n"
+        "SIFT-compatible commands are available through WSL\n"
+        "mcp 1.27.0\n",
+        encoding="utf-8",
+    )
+    (root / "docs" / "pre_release_freshness_checklist.md").write_text(
+        "Checked: 2026-05-07\n"
+        "base-rd-01-cdrive.E01\n"
+        "SIFT-compatible commands are available through WSL\n"
+        "mcp 1.27.0\n",
+        encoding="utf-8",
+    )
+    (root / "docs" / "volatile_notes_update_cycle.md").write_text(
+        "Checked: 2026-05-07\n"
+        "base-rd-01-cdrive.E01\n"
+        "SIFT-compatible commands are available through WSL\n"
+        "mcp 1.27.0\n",
+        encoding="utf-8",
+    )
     (root / "docs" / "judge_max_readiness_report.md").write_text(
         "# Judge Max Readiness Report\n"
         "Autonomous Execution Quality\n"
@@ -149,6 +170,28 @@ def test_final_submission_audit_blocks_missing_correlation_summary(tmp_path: Pat
 
     assert report["status"] == "blocked"
     assert "correlation_summary" in report["blockers"]
+
+
+def test_final_submission_audit_blocks_stale_freshness_docs(tmp_path: Path) -> None:
+    _write_minimum_package(tmp_path)
+    (tmp_path / "docs" / "volatile_notes_update_cycle.md").write_text(
+        "Checked: 2026-05-07\n"
+        "base-rd-01-cdrive.E01\n"
+        "SIFT-compatible commands are available through WSL\n"
+        "mcp 1.27.0\n"
+        "selected `.E01` file is not present locally\n",
+        encoding="utf-8",
+    )
+
+    report = final_submission_audit.build_final_submission_audit(
+        root=tmp_path,
+        demo_video_url="https://youtu.be/example12345",
+        devpost_url="https://devpost.com/software/caseproof-analyst",
+        git_status=final_submission_audit.GitSyncStatus(ok=True, detail="clean and synced"),
+    )
+
+    assert report["status"] == "blocked"
+    assert "freshness_surfaces" in report["blockers"]
 
 
 def test_supported_video_hosts_are_limited_to_devpost_hosts() -> None:

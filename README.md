@@ -136,8 +136,22 @@ runtime flow.
 
 ### 1. Install dependencies
 
+Use an isolated virtual environment for judge runs. This project currently
+targets `mcp 1.27.0`; using a venv avoids conflicts with unrelated local agent
+tools that may pin a different MCP SDK version.
+
 ```bash
+python -m venv .venv
+source .venv/bin/activate
 python -m pip install -r requirements.txt
+```
+
+PowerShell:
+
+```powershell
+py -m venv .venv
+.\.venv\Scripts\Activate.ps1
+py -m pip install -r requirements.txt
 ```
 
 ### 2. Configure the implemented model runtime

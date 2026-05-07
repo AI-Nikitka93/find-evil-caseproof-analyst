@@ -1,24 +1,26 @@
 # Freshness Dependency Register
 
-Checked: 2026-05-06  
-Purpose: close TODO T014, T015, T016, and T017.
+Checked: 2026-05-07
+Purpose: keep volatile contest, runtime, dependency, and evidence assumptions
+current for the final FIND EVIL submission package.
 
 ## Freshness-Sensitive Dependencies
 
 | Dependency | Why it can change | Current verified state | Recheck point |
 |---|---|---|---|
-| FIND EVIL Devpost rules | Deadline, submission wording, resources, and participant count can change. | Live page shows deadline Jun 15, 2026 @ 11:45pm EDT, eight required artifacts, and autonomy as tiebreaker. | Before demo recording and before final submission. |
+| FIND EVIL Devpost rules | Deadline, submission wording, resources, and participant count can change. | Live overview/rules still require a working Protocol SIFT/SIFT agentic project, public GitHub repo, live terminal video, architecture diagram, dataset docs, accuracy report, try-it-out instructions, and execution logs. Deadline remains Jun 15, 2026 @ 11:45pm EDT. | Before demo recording and before final submission. |
 | SIFT Workstation download | OVA version, hash values, install instructions, and supported paths can change. | SANS page shows SIFT Workstation download updated Apr 24, 2026, OVA size 8.81GB, Protocol SIFT install command, and Ubuntu 22.04 install path. | Before real environment setup and before try-it-out instructions are finalized. |
-| Protocol SIFT repository | Install files, Claude Code guidance, allowed tools, and case templates can change. | Repository describes Claude Code + SANS SIFT setup and prerequisites including SIFT Workstation, Claude Code CLI, API key, Python 3/WeasyPrint, and dotnet runtime. | Before final integration instructions and before public README finalization. |
+| Protocol SIFT repository | Install files, Claude Code guidance, allowed tools, and case templates can change. | `git ls-remote https://github.com/teamdfir/protocol-sift.git HEAD` returns `40bed7a96bfd986ea048c3b2aeb9d788b2f3400c`, matching prior research. | Before final integration instructions and before public README finalization. |
 | SIFT repository / install path | Cast install guidance and repository ownership can change. | GitHub redirects to `teamdfir/sift`; install section says Cast replaced SIFT CLI and uses `sudo cast install teamdfir/sift-saltstack`. | Before SIFT install docs are published. |
-| Starter evidence availability | Shared case files may move, expire, or require access. | Prior research saw SRL-2018 Windows `.E01` files as the best fit; current run still needs actual dataset selection/download validation. | Before dataset decision and before video. |
-| Forensic tool behavior | Installed versions and output fields can differ inside the target SIFT environment. | Current local Windows environment lacks SIFT binaries; parser behavior must be rechecked in SIFT. | During real SIFT validation. |
+| Starter evidence availability | Shared case files may move, expire, or require access. | Selected `base-rd-01-cdrive.E01` is present locally under ignored `evidence/`; public docs must still avoid publishing evidence bytes or raw case outputs. | Before video and before any public artifact refresh. |
+| Forensic tool behavior | Installed versions and output fields can differ inside the target SIFT environment. | SIFT-compatible commands are available through WSL for the current validation path; official clean SANS SIFT OVA validation remains a separate pre-submission check if time allows. | Before final video and before judge-machine claims. |
 | AI runtime availability | Models, rate limits, spend limits, request limits, and availability can change. | OpenRouter is the current selected free/low-cost implemented runtime path; Groq is implemented and currently passes API readiness; Anthropic remains implemented if a valid key is available. | Before final demo and before public runtime claims. |
 | Public repository requirements | License visibility and public-hosting behavior can change. | Contest requires public repository and MIT or Apache 2.0 license. | Before repository publication and final submission. |
+| MCP Python SDK | Official SDK release and structured-output behavior can change. | PyPI shows `mcp 1.27.0`; active local runtime now has `mcp 1.27.0` installed, matching `requirements.txt`. | Before final local gates and clean-machine setup. |
 
 ## Current SIFT / Protocol SIFT Picture
 
-Verified on 2026-05-06:
+Verified on 2026-05-07:
 
 - FIND EVIL directs participants to SANS SIFT Workstation and Protocol SIFT.
 - SANS SIFT page describes Protocol SIFT as experimental and separate from core SIFT Workstation.
@@ -27,6 +29,7 @@ Verified on 2026-05-06:
 - SIFT Workstation supports forensic investigation workflows and evidence image support including raw and E01-style evidence handling paths.
 - Protocol SIFT repository describes a Claude Code + SANS SIFT Workstation configuration, not a replacement for the custom CaseProof MCP boundary.
 - SIFT repository install guidance currently points to Cast and `teamdfir/sift-saltstack`.
+- Current CaseProof validation uses a WSL SIFT-compatible command surface, not a claim that the official SANS SIFT OVA has been clean-machine validated.
 
 Product implication:
 
@@ -36,7 +39,7 @@ Product implication:
 
 ## Current AI Runtime Constraints
 
-Verified on 2026-05-06:
+Verified on 2026-05-07:
 
 - The implemented runtimes in this repository are Anthropic, OpenRouter, and
   Groq through `src.agent`.
@@ -46,6 +49,7 @@ Verified on 2026-05-06:
 - OpenRouter provides an external model-routing surface and has its own key/account behavior and model availability constraints.
 - In this project, OpenRouter and Groq adapters are implemented; OpenRouter is
   the selected demo path and Groq currently passes API readiness.
+- Active Python dependency alignment was refreshed with `py -m pip install -r requirements.txt`; `mcp 1.27.0` is installed for this project run. A non-project package may still require a different MCP version, so judges should use an isolated virtual environment.
 
 Public-claim rule:
 

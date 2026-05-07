@@ -1,6 +1,6 @@
 # Volatile Notes Update Cycle
 
-Date: 2026-05-06
+Date: 2026-05-07
 
 Purpose: keep contest, dataset, runtime, and submission assumptions current until final submission.
 
@@ -88,13 +88,14 @@ If a volatile fact changes:
 
 ## Current Baseline
 
-As of 2026-05-06:
+As of 2026-05-07:
 
-- contest and resources pages were live-checked;
-- starter evidence link exists on the resources page;
-- static fetch does not expose the full dynamic Egnyte file listing;
-- selected `.E01` file is not present locally;
-- SIFT tool readiness is blocked in the current Windows environment.
+- FIND EVIL overview and rules were live-checked again.
+- Protocol SIFT repository HEAD is still `40bed7a96bfd986ea048c3b2aeb9d788b2f3400c`.
+- Official MCP Python SDK `mcp 1.27.0` is the current project dependency target and is installed in the active Python runtime.
+- The selected `base-rd-01-cdrive.E01` evidence file is present locally under the ignored `evidence/` folder.
+- SIFT-compatible commands are available through WSL for the current local validation path.
+- Public Devpost submission remains blocked only by the missing public demo video URL and submitted Devpost URL.
 
 ## Stop Conditions
 

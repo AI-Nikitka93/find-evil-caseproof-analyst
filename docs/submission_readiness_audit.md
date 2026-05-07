@@ -8,7 +8,7 @@ Verdict: **LOCAL PACKAGE PREPARED - external Devpost gates still block final sub
 
 | Check | Result |
 |---|---|
-| `py -m pytest` | PASS, 98 tests on 2026-05-07 after bounded correlation and final-gate hardening |
+| `py -m pytest` | PASS, 102 tests on 2026-05-07 after freshness-gate hardening |
 | `py -m py_compile ...` | PASS |
 | `py scripts\check_env.py --strict` | PASS for required forensic command availability through WSL |
 | `py scripts\preflight_case.py ... --no-api-required --strict` | PASS for deterministic MCP/backend evidence run |
@@ -21,11 +21,11 @@ Verdict: **LOCAL PACKAGE PREPARED - external Devpost gates still block final sub
 | `py scripts\generate_public_trace_packet.py --json --strict` | PASS, generated 10 public-safe real execution-log records including registry extraction, event extraction, bounded correlation, and self-correction |
 | `py scripts\demo_rehearsal.py --json --strict` | PASS, confirms demo script, public trace, local CASE-RD01 reports, real evidence opening, artifact-depth steps, and visible self-correction story |
 | `py scripts\audit_judge_readiness.py --write-doc --json --strict` | PASS, all six FIND EVIL judging criteria map to local `17/17` proof in `docs/judge_max_readiness_report.md`; external video/Devpost gates remain separate |
-| `py scripts\final_submission_audit.py --json` | BLOCKED as designed until public video URL, submitted Devpost URL, and clean public repo sync are all present; now also checks demo rehearsal assets, correlation summary, and required local markdown links |
+| `py scripts\final_submission_audit.py --json` | BLOCKED as designed until public video URL, submitted Devpost URL, and clean public repo sync are all present; now also checks demo rehearsal assets, correlation summary, required local markdown links, and volatile freshness docs |
 | `py scripts\audit_release_controls.py --json --strict` | PASS on last full gate run before this audit refresh |
 | `py scripts\audit_design_quality.py --strict` | PASS on last full gate run before this audit refresh |
 | `py scripts\audit_visual_package.py --strict` | PASS on last full gate run before this audit refresh |
-| Live Devpost rule refresh | PASS on 2026-05-07; deadline and required components recorded in `docs/final_submission_package.md` |
+| Live Devpost / MCP / Protocol SIFT refresh | PASS on 2026-05-07; deadline, required components, Protocol SIFT HEAD, MCP `1.27.0`, selected evidence presence, and WSL SIFT-compatible command surface recorded in freshness docs |
 
 ## Required Submission Components
 
