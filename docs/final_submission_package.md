@@ -138,7 +138,7 @@ Next work is deeper content-level analysis:
 | License | MIT, `LICENSE` |
 | README setup | `README.md` |
 | Local run instructions | README plus `docs/judge_try_it_out.md` |
-| Demo video | YouTube/Vimeo/Youku URL after recording |
+| Demo video | YouTube/Vimeo/Youku URL after recording; pre-recording rehearsal via `py scripts\demo_rehearsal.py --strict` |
 | Architecture diagram | `docs/architecture.md` |
 | Dataset documentation | `docs/dataset_documentation.md` |
 | Accuracy report | `docs/accuracy_report.md` |
@@ -152,6 +152,8 @@ Next work is deeper content-level analysis:
 - Confirm the repository does not include `evidence/`, `cases/`, `.env.local`,
   or local-only notes.
 - Confirm all submitted text is English.
+- Run `py scripts\demo_rehearsal.py --strict` before recording and use its
+  command sequence for the live terminal screencast.
 - Confirm the video shows the same behavior described here.
 - Run the final 100-point gate after the video and Devpost page exist:
 

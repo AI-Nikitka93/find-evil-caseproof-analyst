@@ -21,6 +21,7 @@ steps are complete; GO for public repository package.**
 | Traceability walkthrough exists | GO | `docs/reviewer_traceability_walkthrough.md` |
 | Devpost text draft exists | GO | `docs/final_submission_package.md` |
 | Demo script exists | GO | `docs/demo_video_script.md` |
+| Demo rehearsal gate exists | GO | `scripts/demo_rehearsal.py --strict` verifies required demo story assets before recording |
 | Judge runbook exists | GO | `docs/judge_try_it_out.md` |
 | Public GitHub URL | GO | https://github.com/AI-Nikitka93/find-evil-caseproof-analyst |
 | Final submission audit exists | GO | `scripts/final_submission_audit.py --json` |
@@ -32,6 +33,12 @@ steps are complete; GO for public repository package.**
 | Demo video URL | NO-GO | Record under-5-minute terminal demo with audio and upload publicly. |
 | Devpost form | NO-GO | Paste final English text, public repo URL, and video URL into Devpost. |
 | Final video/Devpost link audit | NO-GO | Check public video and final Devpost links from a non-private session. |
+
+Use this command before recording the video:
+
+```powershell
+py scripts\demo_rehearsal.py --strict
+```
 
 Use this command as the final mechanical gate after the video and Devpost page
 exist:

@@ -379,3 +379,14 @@
 Локальный account context: без изменений
 Локальная карта секретов: без изменений
 Следующий шаг: Run the full verification gate again, then publish public GitHub and record the demo video.
+
+## 2026-05-07
+
+Дата и время: 2026-05-07
+Роль: P-DEMO-REHEARSAL-GATE
+Сделано: Added a machine-checkable pre-recording demo rehearsal gate so the final FIND EVIL video path is no longer only prose. `scripts/demo_rehearsal.py` verifies the demo script, narration notes, public-safe trace, local CASE-RD01 report package, real evidence opening, artifact-depth steps, and visible self-correction signal. The final submission audit now also checks demo rehearsal assets and local markdown links across README/submission/runbook surfaces.
+Изменены файлы: `scripts/demo_rehearsal.py`, `scripts/final_submission_audit.py`, `tests/test_demo_rehearsal.py`, `tests/test_final_submission_audit.py`, `README.md`, `docs/final_submission_package.md`, `docs/judge_try_it_out.md`, `docs/submission_readiness_audit.md`, `docs/final_quality_gate_matrix.md`, `docs/final_release_go_no_go_2026-05-07.md`, `docs/MASTER_TODO_WORLD_CLASS.md`, `docs/STATE.md`, `docs/state.json`, `docs/PROJECT_HISTORY.md`
+Результат/доказательство: RED test first failed because `scripts.demo_rehearsal` did not exist; targeted tests then passed with `7 passed`. `py scripts\demo_rehearsal.py --json --strict` -> status `ready`, blockers `[]`. `py scripts\final_submission_audit.py --json` now reaches the enhanced local gates and blocks only on dirty worktree plus external video/Devpost URLs before commit.
+Локальный account context: без изменений
+Локальная карта секретов: без изменений
+Следующий шаг: Run full verification, commit/push the rehearsal-gate package, then record/upload the public terminal demo and submit Devpost.

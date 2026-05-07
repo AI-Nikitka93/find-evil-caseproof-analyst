@@ -19,7 +19,8 @@ Verdict: **LOCAL PACKAGE PREPARED - external Devpost gates still block final sub
 | `py scripts\run_real_case.py ... --json` | PASS, generated real CASE-RD01 local outputs |
 | `py scripts\audit_real_validation.py --case-workspace "M:\Projects\Konkurs\Find Evil!\cases\CASE-RD01" --json --strict` | PASS |
 | `py scripts\generate_public_trace_packet.py --json --strict` | PASS, generated 9 public-safe real execution-log records including registry and event extraction |
-| `py scripts\final_submission_audit.py --json` | BLOCKED as designed until public video URL, submitted Devpost URL, and clean public repo sync are all present |
+| `py scripts\demo_rehearsal.py --json --strict` | PASS, confirms demo script, public trace, local CASE-RD01 reports, real evidence opening, artifact-depth steps, and visible self-correction story |
+| `py scripts\final_submission_audit.py --json` | BLOCKED as designed until public video URL, submitted Devpost URL, and clean public repo sync are all present; now also checks demo rehearsal assets and required local markdown links |
 | `py scripts\audit_release_controls.py --json --strict` | PASS on last full gate run before this audit refresh |
 | `py scripts\audit_design_quality.py --strict` | PASS on last full gate run before this audit refresh |
 | `py scripts\audit_visual_package.py --strict` | PASS on last full gate run before this audit refresh |
@@ -43,6 +44,7 @@ Verdict: **LOCAL PACKAGE PREPARED - external Devpost gates still block final sub
 | Demo video | Missing | Not recorded |
 | Devpost/project story | Ready as draft | `docs/final_submission_package.md` |
 | Demo video script | Ready | `docs/demo_video_script.md` |
+| Demo rehearsal gate | Ready | `scripts/demo_rehearsal.py` |
 | Judge try-it-out instructions | Ready | `docs/judge_try_it_out.md` |
 | Quality gate matrix | Ready | `docs/final_quality_gate_matrix.md` |
 | Public repository publication | Verified | https://github.com/AI-Nikitka93/find-evil-caseproof-analyst |

@@ -13,7 +13,7 @@ Project: CaseProof Analyst / Evidence-Locked Self-Correcting Disk Triage MCP
 | Constraint implementation | STRONG | Eight fixed MCP tools, no generic shell, read-only evidence boundary | Final public docs must not imply broad SIFT coverage. |
 | Audit trail quality | STRONG | `cases/CASE-RD01/logs/agent_execution.jsonl`, `docs/public_real_execution_log_sample.jsonl`, evidence book, correction ledger | Public excerpt is sanitized; raw local case outputs are ignored from public repo by policy. |
 | Usability and documentation | READY FOR PUBLIC PACKAGE | README, `docs/judge_try_it_out.md`, troubleshooting, recovery instructions, public GitHub URL | Clean external judge machine run still needs final verification. |
-| Submission media | NOT COMPLETE | `docs/demo_video_script.md` | Actual video recording and public upload remain external actions. |
+| Submission media | NOT COMPLETE | `docs/demo_video_script.md`, `docs/demo_narration_notes.md`, `scripts/demo_rehearsal.py` | Rehearsal gate passes locally; actual video recording and public upload remain external actions. |
 | Public release hygiene | PUBLISHED WITH FINAL AUDIT | release-control audit, ignored-file policy, secret scans, public GitHub repository, `scripts/final_submission_audit.py` | Video URL and Devpost link audit remain external. |
 
 ## Judging Criteria Mapping
@@ -114,8 +114,8 @@ Evidence:
 - troubleshooting and recovery path;
 - release checklist.
 - `scripts/final_submission_audit.py` gives a single final gate for required
-  files, public trace, MIT license, public repo synchronization, supported video
-  URL, and submitted Devpost URL.
+  files, public trace, demo rehearsal assets, local markdown links, MIT license,
+  public repo synchronization, supported video URL, and submitted Devpost URL.
 
 Final wording:
 

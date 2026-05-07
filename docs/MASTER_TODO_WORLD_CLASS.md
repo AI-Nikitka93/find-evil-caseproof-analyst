@@ -147,7 +147,7 @@ bounded CASE-RD01 pass:
 
 [x] T178 [P0] Build final release go/no-go board: blockers, accepted limitations, remaining risks, and submission decision.
 
-[ ] T179 [P0] Run final artifact path audit: every README and submission link resolves to existing public material. Local markdown links pass; final public GitHub/video links remain external.
+[x] T179 [P0] Run final artifact path audit: every README and submission link resolves to existing public material. Local README/submission/runbook links are now checked by `scripts/final_submission_audit.py`; final public video and Devpost links remain external.
 
 [x] T180 [P0] Record final release state in `docs/STATE.md`, `docs/state.json`, and `docs/PROJECT_HISTORY.md`.
 
@@ -173,6 +173,6 @@ bounded CASE-RD01 pass:
 ## Active Count
 
 - Local actionable tasks remaining: 0
-- External submission gates remaining: T153, T154, T160, T161, T163, T179
-- Closed active tasks retained: T133-T152, T155-T159, T162, T164-T178, T180
+- External submission gates remaining: T153, T154, T160, T161, T163
+- Closed active tasks retained: T133-T152, T155-T159, T162, T164-T180
 - Deferred non-submission tasks removed from active path: 40+

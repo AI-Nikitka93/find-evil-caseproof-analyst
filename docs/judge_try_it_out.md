@@ -102,6 +102,20 @@ Verify:
 py scripts\audit_real_validation.py --case-workspace cases\CASE-RD01-JUDGE --strict
 ```
 
+## Demo Rehearsal Gate
+
+Use this before recording the FIND EVIL video. It checks that the demo materials
+and public-safe trace still prove the required live-terminal story: real
+evidence opened, artifact-depth steps, and a visible self-correction reason.
+
+```powershell
+py scripts\demo_rehearsal.py --strict
+```
+
+The command also prints the exact terminal sequence to rehearse before upload.
+It does not replace the video requirement; it prevents recording a demo that
+misses a required judging signal.
+
 For a final submission package check after the public video and Devpost page
 exist:
 

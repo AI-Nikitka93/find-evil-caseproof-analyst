@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import subprocess
 import sys
 from dataclasses import asdict, dataclass
@@ -11,6 +12,8 @@ from urllib.parse import urlparse
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
 PUBLIC_REPO_URL = "https://github.com/AI-Nikitka93/find-evil-caseproof-analyst"
 REQUIRED_FILES = (
     "README.md",
@@ -20,8 +23,12 @@ REQUIRED_FILES = (
     "docs/accuracy_report.md",
     "docs/judge_try_it_out.md",
     "docs/final_submission_package.md",
+    "docs/demo_video_script.md",
+    "docs/demo_narration_notes.md",
     "docs/public_real_execution_log_sample.jsonl",
     "docs/public_real_traceability_packet.md",
+    "docs/reviewer_traceability_walkthrough.md",
+    "scripts/demo_rehearsal.py",
 )
 SUPPORTED_VIDEO_HOST_MARKERS = (
     "youtube.com",
@@ -154,6 +161,46 @@ def _check_public_trace(root: Path) -> GateStatus:
     return GateStatus(ok=True, detail="public trace includes evidence opening and self-correction")
 
 
+def _check_demo_rehearsal_assets(root: Path) -> GateStatus:
+    from scripts.demo_rehearsal import build_demo_rehearsal_report
+
+    report = build_demo_rehearsal_report(root=root, case_id="CASE-RD01")
+    if report["status"] != "ready":
+        return GateStatus(ok=False, detail="demo rehearsal blocked: " + ", ".join(report["blockers"]))
+    return GateStatus(ok=True, detail="demo rehearsal assets prove real evidence, artifact depth, and self-correction")
+
+
+def _check_required_markdown_links(root: Path) -> GateStatus:
+    surfaces = (
+        "README.md",
+        "docs/final_submission_package.md",
+        "docs/judge_try_it_out.md",
+        "docs/reviewer_traceability_walkthrough.md",
+    )
+    broken: list[str] = []
+    link_pattern = re.compile(r"(?<!!)\[[^\]]+\]\(([^)]+)\)")
+    for surface in surfaces:
+        path = root / surface
+        if not path.is_file():
+            broken.append(f"{surface}:missing_surface")
+            continue
+        for match in link_pattern.finditer(_read(path)):
+            target = match.group(1).strip().strip("<>")
+            if not target or target.startswith("#") or "://" in target or target.startswith("mailto:"):
+                continue
+            target_path = (path.parent / target.split("#", 1)[0]).resolve()
+            try:
+                target_path.relative_to(root.resolve())
+            except ValueError:
+                broken.append(f"{surface}:{target}")
+                continue
+            if not target_path.exists():
+                broken.append(f"{surface}:{target}")
+    if broken:
+        return GateStatus(ok=False, detail="broken local markdown links: " + ", ".join(broken[:10]))
+    return GateStatus(ok=True, detail="required README/submission/runbook markdown links resolve locally")
+
+
 def build_final_submission_audit(
     *,
     root: Path = PROJECT_ROOT,
@@ -168,6 +215,8 @@ def build_final_submission_audit(
         "public_repo_links": _check_public_repo_links(root),
         "license": _check_license(root),
         "public_trace": _check_public_trace(root),
+        "demo_rehearsal_assets": _check_demo_rehearsal_assets(root),
+        "required_markdown_links": _check_required_markdown_links(root),
         "public_repo_sync": GateStatus(ok=git_status.ok, detail=git_status.detail),
     }
     external_gates = {

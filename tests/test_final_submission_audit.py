@@ -7,6 +7,7 @@ def _write_minimum_package(root: Path) -> None:
     (root / "docs").mkdir()
     (root / "src").mkdir()
     (root / "tests").mkdir()
+    (root / "scripts").mkdir()
     (root / "README.md").write_text(
         "Public repo: https://github.com/AI-Nikitka93/find-evil-caseproof-analyst\n",
         encoding="utf-8",
@@ -22,11 +23,28 @@ def _write_minimum_package(root: Path) -> None:
         encoding="utf-8",
     )
     (root / "docs" / "public_real_traceability_packet.md").write_text("trace\n", encoding="utf-8")
+    (root / "docs" / "reviewer_traceability_walkthrough.md").write_text("walkthrough\n", encoding="utf-8")
+    (root / "docs" / "demo_video_script.md").write_text(
+        "live terminal execution\nreal evidence\nself-correction sequence\ntraceability chain\n",
+        encoding="utf-8",
+    )
+    (root / "docs" / "demo_narration_notes.md").write_text("audio narration\n", encoding="utf-8")
     (root / "docs" / "public_real_execution_log_sample.jsonl").write_text(
         '{"tool_name":"case_open_readonly","correction_reason":null}\n'
+        '{"tool_name":"extract_registry_persistence","correction_reason":null}\n'
         '{"tool_name":"verify_claim","correction_reason":"Unsupported claim dropped."}\n',
         encoding="utf-8",
     )
+    (root / "scripts" / "demo_rehearsal.py").write_text("print('demo rehearsal')\n", encoding="utf-8")
+    reports = root / "cases" / "CASE-RD01" / "reports"
+    reports.mkdir(parents=True)
+    for name in (
+        "final_analyst_report.md",
+        "evidence_book.md",
+        "correction_ledger.md",
+        "real_run_accuracy_report.md",
+    ):
+        (reports / name).write_text("case output\n", encoding="utf-8")
 
 
 def test_final_submission_audit_passes_when_external_urls_and_git_sync_are_ready(tmp_path: Path) -> None:
@@ -61,6 +79,40 @@ def test_final_submission_audit_blocks_missing_demo_and_dirty_git(tmp_path: Path
     assert "demo_video_url" in report["blockers"]
     assert "devpost_url" in report["blockers"]
     assert "public_repo_sync" in report["blockers"]
+
+
+def test_final_submission_audit_blocks_when_demo_assets_do_not_prove_correction(tmp_path: Path) -> None:
+    _write_minimum_package(tmp_path)
+    (tmp_path / "docs" / "demo_video_script.md").write_text("live terminal only\n", encoding="utf-8")
+
+    report = final_submission_audit.build_final_submission_audit(
+        root=tmp_path,
+        demo_video_url="https://youtu.be/example12345",
+        devpost_url="https://devpost.com/software/caseproof-analyst",
+        git_status=final_submission_audit.GitSyncStatus(ok=True, detail="clean and synced"),
+    )
+
+    assert report["status"] == "blocked"
+    assert "demo_rehearsal_assets" in report["blockers"]
+
+
+def test_final_submission_audit_blocks_broken_required_markdown_link(tmp_path: Path) -> None:
+    _write_minimum_package(tmp_path)
+    (tmp_path / "README.md").write_text(
+        "Public repo: https://github.com/AI-Nikitka93/find-evil-caseproof-analyst\n"
+        "[missing](docs/missing.md)\n",
+        encoding="utf-8",
+    )
+
+    report = final_submission_audit.build_final_submission_audit(
+        root=tmp_path,
+        demo_video_url="https://youtu.be/example12345",
+        devpost_url="https://devpost.com/software/caseproof-analyst",
+        git_status=final_submission_audit.GitSyncStatus(ok=True, detail="clean and synced"),
+    )
+
+    assert report["status"] == "blocked"
+    assert "required_markdown_links" in report["blockers"]
 
 
 def test_supported_video_hosts_are_limited_to_devpost_hosts() -> None:

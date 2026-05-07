@@ -101,8 +101,11 @@ Final submission control docs:
 - [`docs/final_release_go_no_go_2026-05-07.md`](docs/final_release_go_no_go_2026-05-07.md):
   final go/no-go board.
 - [`scripts/final_submission_audit.py`](scripts/final_submission_audit.py):
-  final 100-point gate for required files, public repo sync, public video URL,
-  and submitted Devpost URL.
+  final 100-point gate for required files, demo rehearsal assets, local
+  markdown links, public repo sync, public video URL, and submitted Devpost URL.
+- [`scripts/demo_rehearsal.py`](scripts/demo_rehearsal.py): fast pre-recording
+  check that the live terminal demo has the required real-evidence,
+  self-correction, artifact-depth, and traceability story.
 
 ## Architecture & Security Boundaries
 
@@ -223,11 +226,18 @@ agent_execution_log.jsonl
 ```bash
 python -m pytest tests
 python -m py_compile src/agent.py src/prompts.py src/server.py
+python scripts/demo_rehearsal.py --json --strict
 python scripts/final_submission_audit.py --json
 ```
 
 The final submission audit intentionally stays `blocked` until the public
-YouTube/Vimeo/Youku demo URL and submitted Devpost URL are supplied:
+YouTube/Vimeo/Youku demo URL and submitted Devpost URL are supplied. Before
+recording, run the rehearsal check and use the printed command sequence as the
+terminal demo spine:
+
+```bash
+python scripts/demo_rehearsal.py
+```
 
 ```bash
 python scripts/final_submission_audit.py --demo-video-url VIDEO_URL --devpost-url DEVPOST_URL --strict
@@ -296,8 +306,8 @@ python scripts/final_submission_audit.py --demo-video-url VIDEO_URL --devpost-ur
   deterministic real evidence run remains the primary proof path for the video.
 - Bounded event-log content parsing is now present; full timeline and deeper
   registry/event correlation remain open.
-- Demo video upload and Devpost submission remain external gates. Draft text
-  and recording script are now included in `docs/`, and
+- Demo video upload and Devpost submission remain external gates. Draft text,
+  recording script, and machine-checkable rehearsal command are now included;
   `scripts/final_submission_audit.py` is the final 100-point gate before
   pressing Submit.
 
