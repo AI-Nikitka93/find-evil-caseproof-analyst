@@ -8,8 +8,8 @@ Project: CaseProof Analyst / Evidence-Locked Self-Correcting Disk Triage MCP
 | Gate | Status | Evidence | Remaining risk |
 |---|---:|---|---|
 | Autonomous execution quality | PARTIAL+ | `src/agent.py`, OpenRouter smoke runs, bounded loop constants, execution logs, `docs/autonomous_smoke_hardening_2026-05-07.md` | Full long-run autonomous investigation is not complete; deterministic backend run remains the primary demo proof path. |
-| IR accuracy | PARTIAL+ | `docs/accuracy_report.md`, `cases/CASE-RD01/reports/real_run_accuracy_report.md`, `cases/CASE-RD01/exports/registry_content_summary.json`, `cases/CASE-RD01/exports/event_content_summary.json` | SOFTWARE Run keys, SYSTEM services, and bounded EVTX records are parsed; full timeline and deeper correlation remain open. |
-| Breadth and depth | PARTIAL | Real bounded RD01 pass, high-signal inventory, reviewer-derived manifest | Depth is honest but intentionally narrow. |
+| IR accuracy | STRONG-PARTIAL | `docs/accuracy_report.md`, `cases/CASE-RD01/reports/real_run_accuracy_report.md`, `cases/CASE-RD01/exports/registry_content_summary.json`, `cases/CASE-RD01/exports/event_content_summary.json`, `cases/CASE-RD01/exports/correlation_summary.json` | SOFTWARE Run keys, SYSTEM services, bounded EVTX records, and bounded registry/event correlation are parsed; full Plaso timeline and deeper process/account corroboration remain open. |
+| Breadth and depth | STRONG-PARTIAL | Real bounded RD01 pass, high-signal inventory, event/registry correlation summary, reviewer-derived manifest | Depth is honest and narrow; full timeline remains future work. |
 | Constraint implementation | STRONG | Eight fixed MCP tools, no generic shell, read-only evidence boundary | Final public docs must not imply broad SIFT coverage. |
 | Audit trail quality | STRONG | `cases/CASE-RD01/logs/agent_execution.jsonl`, `docs/public_real_execution_log_sample.jsonl`, evidence book, correction ledger | Public excerpt is sanitized; raw local case outputs are ignored from public repo by policy. |
 | Usability and documentation | READY FOR PUBLIC PACKAGE | README, `docs/judge_try_it_out.md`, troubleshooting, recovery instructions, public GitHub URL | Clean external judge machine run still needs final verification. |
@@ -44,7 +44,7 @@ Final wording:
 
 Evidence:
 
-- confirmed real findings include evidence integrity, filesystem/artifact availability, bounded SOFTWARE Run-key/SYSTEM service registry content, and bounded EVTX event content;
+- confirmed real findings include evidence integrity, filesystem/artifact availability, bounded SOFTWARE Run-key/SYSTEM service registry content, bounded EVTX event content, and bounded registry/event correlation;
 - no compromise finding is claimed;
 - unsupported compromise/persistence claim is dropped;
 - unknowns are preserved.
@@ -52,7 +52,7 @@ Evidence:
 Final wording:
 
 - say "partial real validation passed";
-- say "full timeline and deeper registry/event correlation remain future work";
+- say "full Plaso timeline and deeper process/account corroboration remain future work";
 - do not say "APT activity found" unless content-level evidence is added later.
 
 ### Breadth And Depth
@@ -64,6 +64,7 @@ Evidence:
 - filesystem boundary and high-signal artifact discovery;
 - bounded registry content parsing for Run keys and services;
 - bounded EVTX event content parsing;
+- bounded registry/event correlation with compromise status kept unconfirmed;
 - replay consistency.
 
 Final wording:
@@ -94,7 +95,7 @@ Evidence:
   where available, and correction reasons;
 - evidence book links findings to evidence refs;
 - correction ledger records rejected unsupported claim.
-- public trace now includes `extract_registry_persistence` and `extract_event_records` before final claim verification.
+- public trace now includes `extract_registry_persistence`, `extract_event_records`, and a bounded correlation step before final claim verification.
 - public-safe real execution excerpt is available at
   `docs/public_real_execution_log_sample.jsonl`, with the walkthrough in
   `docs/public_real_traceability_packet.md`.

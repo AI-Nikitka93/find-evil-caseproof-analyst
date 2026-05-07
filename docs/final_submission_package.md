@@ -54,9 +54,9 @@ Instead, it can call a small set of typed forensic tools:
 
 The current real CASE-RD01 pass proves evidence integrity, NTFS volume access,
 high-signal Windows artifact discovery, bounded registry Run-key/service
-content parsing, bounded EVTX event-content parsing, replay consistency, and
-self-correction for an unsupported compromise claim. It does not claim full
-incident reconstruction.
+content parsing, bounded EVTX event-content parsing, bounded registry/event
+correlation, replay consistency, and self-correction for an unsupported
+compromise claim. It does not claim full incident reconstruction.
 
 ## How It Was Built
 
@@ -93,13 +93,15 @@ real bounded pass produced:
 - real-run accuracy report;
 - execution log review;
 - public-safe real execution-log excerpt;
+- bounded registry/event correlation summary;
 - judge summary;
 - artifact index;
 - JSONL execution log.
 
 Confirmed findings are limited to evidence integrity, volume accessibility,
 artifact-family availability, bounded registry Run-key/service content, and
-bounded EVTX event records. No malicious finding is claimed.
+bounded EVTX event records, plus a bounded correlation finding that explicitly
+keeps compromise unconfirmed. No malicious finding is claimed.
 
 ## Challenges
 
@@ -125,8 +127,8 @@ demo that silently upgrades assumptions into findings.
 Next work is deeper content-level analysis:
 
 - expand registry parsing beyond SOFTWARE Run keys and SYSTEM services;
-- correlate parsed event records with registry and timeline anchors;
 - generate and summarize a bounded Plaso timeline;
+- correlate full timeline, process, account, and persistence evidence;
 - run a longer autonomous model loop when provider limits allow it;
 - compare against official ground truth if it becomes available.
 

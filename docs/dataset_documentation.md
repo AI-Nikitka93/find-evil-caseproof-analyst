@@ -1,7 +1,7 @@
 # Dataset Documentation
 
 Project: Evidence-Locked Self-Correcting Disk Triage MCP  
-Status: real bounded CASE-RD01 evidence pass completed; full incident analysis still open  
+Status: real bounded CASE-RD01 evidence pass completed with bounded correlation; full incident analysis still open
 Last updated: 2026-05-07
 
 ## Real Dataset Used
@@ -43,7 +43,7 @@ parsing. Public copy must keep that distinction visible.
 
 ## Run Scope
 
-Run ID: `real-20260507T101441Z`
+Run ID: `real-20260507T144710Z`
 
 Completed scope:
 
@@ -59,6 +59,8 @@ Completed scope:
 - bounded RegRipper parsing of SOFTWARE Run keys and SYSTEM services;
 - `icat` extraction of `Security.evtx`, `System.evtx`, and `Application.evtx`
   followed by bounded `python-evtx` content parsing;
+- bounded registry/event correlation with watchlist event counts, timeline
+  anchors, and explicit `confirmed_compromise=false` disposition;
 - root-inventory replay consistency check;
 - final analyst report, evidence book, correction ledger, real-run accuracy
   report, execution log review, judge summary, and artifact index generation.
@@ -90,6 +92,7 @@ ignored from public repository packaging.
 | High-signal inventory export | `cases/CASE-RD01/exports/high_signal_inventory.json` |
 | Registry content summary | `cases/CASE-RD01/exports/registry_content_summary.json` |
 | Event content summary | `cases/CASE-RD01/exports/event_content_summary.json` |
+| Correlation summary | `cases/CASE-RD01/exports/correlation_summary.json` |
 | Preflight export | `cases/CASE-RD01/exports/preflight_report.json` |
 
 ## Observed Artifact Counts
@@ -107,6 +110,8 @@ From `cases/CASE-RD01/reports/real_run_summary.json`:
 | SOFTWARE Run key records parsed | 5 |
 | SYSTEM service records parsed | 80 |
 | EVTX content records parsed | 120 |
+| Correlation findings | 2 |
+| Bounded timeline anchors | 25 |
 
 ## Confirmed Real Findings
 
@@ -121,6 +126,8 @@ bounded registry/event-content facts:
   real image and parsed into bounded registry content records.
 - `F005`: Security/System/Application EVTX files were extracted from the real
   image and parsed into 120 bounded event records.
+- `F006`: Bounded registry/event correlation was performed and kept compromise
+  status unconfirmed pending deeper timeline and process/account corroboration.
 
 No malicious finding is confirmed by this run.
 
@@ -143,15 +150,15 @@ It must not be described as real CASE-RD01 accuracy.
   reconstruction.
 - The WSL toolchain is not the official SANS SIFT OVA.
 - No official answer key is available in local project materials.
-- Full timeline, registry analysis beyond Run keys/services, and deeper
-  registry/event/timeline correlation remain unparsed in this bounded pass.
+- Full Plaso timeline, registry analysis beyond Run keys/services, and deeper
+  process/account/timeline corroboration remain unparsed in this bounded pass.
 
 ## Next Dataset Work
 
 - Run a longer OpenRouter/Groq/Anthropic autonomous loop when provider limits
   allow it.
-- Expand registry parsing beyond Run keys/services and correlate parsed event
-  content into evidence-backed findings.
+- Expand registry parsing beyond Run keys/services and correlate full timeline,
+  process, account, and persistence content into evidence-backed findings.
 - Run or bound full timeline generation.
 - Update the reviewer-derived manifest from content-level evidence.
 - Prepare public-safe excerpts or summaries for submission without publishing

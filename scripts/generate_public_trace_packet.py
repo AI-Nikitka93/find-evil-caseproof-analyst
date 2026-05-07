@@ -205,8 +205,9 @@ def render_trace_markdown(records: list[dict[str, Any]], *, case_id: str, source
             "## Limits",
             "",
             "- This is a redacted execution-log excerpt, not the full local case workspace.",
-            "- Registry Run-key, service content, and bounded event-log content are parsed",
-            "  in this run; full timeline and deeper cross-artifact correlation remain future work.",
+            "- Registry Run-key, service content, bounded event-log content, and a",
+            "  bounded registry/event correlation summary are parsed in this run;",
+            "  full Plaso timeline and deeper process/account corroboration remain future work.",
             "- The public log proves traceability for the bounded real run, not full",
             "  incident reconstruction.",
         ]

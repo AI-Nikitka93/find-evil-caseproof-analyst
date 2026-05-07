@@ -17,6 +17,7 @@ if str(PROJECT_ROOT) not in sys.path:
 from scripts.preflight_case import build_preflight_report
 from src import server
 from src.claim_policy import CorrectionLedgerEntry
+from src.correlation import build_correlation_summary
 from src.output_package import (
     AccuracySummary,
     EvidenceBookEntry,
@@ -408,11 +409,24 @@ def run_case(*, case_id: str, evidence_path: Path, case_workspace: Path, expecte
         "truncated": event_content.truncated,
         "malicious_classification": "not_claimed",
     }
+    correlation_summary = build_correlation_summary(registry_content_summary, event_content_summary)
     _write_json(exports / "root_inventory.json", [record.model_dump(mode="json") for record in root_inventory.records])
     _write_json(exports / "high_signal_inventory.json", [record.model_dump(mode="json") for record in signal_inventory.records])
     _write_json(exports / "registry_content_summary.json", registry_content_summary)
     _write_json(exports / "event_content_summary.json", event_content_summary)
+    _write_json(exports / "correlation_summary.json", correlation_summary)
     _write_json(exports / "preflight_report.json", preflight)
+    _log(
+        run_id=run_id,
+        case_id=case_id,
+        evidence_id=opened.evidence_id,
+        step_number=9,
+        tool_name="verify_claim",
+        arguments={"claim": "Correlate bounded registry and event evidence before compromise disposition."},
+        parser_status="ok",
+        intent="Correlate registry persistence records and EVTX watchlist events before accepting or rejecting compromise claims.",
+        output_reference="exports/correlation_summary.json",
+    )
 
     replay_text = "\n".join(
         [
@@ -473,6 +487,26 @@ def run_case(*, case_id: str, evidence_path: Path, case_workspace: Path, expecte
                 confidence="confirmed",
             )
         )
+    correlation_report_finding: Finding | None = None
+    correlation_findings = correlation_summary.get("correlation_findings", [])
+    if correlation_findings:
+        first_correlation = correlation_findings[0]
+        evidence_refs = [
+            str(item)
+            for item in first_correlation.get("evidence_refs", [])
+            if isinstance(item, str) and item.strip()
+        ][:6]
+        if not evidence_refs:
+            evidence_refs = ["exports/correlation_summary.json"]
+        correlation_report_finding = Finding(
+            finding_id="F006",
+            title="Bounded registry/event correlation was performed and kept compromise status unconfirmed pending deeper timeline and process/account corroboration.",
+            status="confirmed",
+            evidence_refs=evidence_refs,
+            tool_trace=["extract_registry_persistence", "extract_event_records", "verify_claim"],
+            confidence="confirmed_artifact_correlation",
+        )
+        findings.append(correlation_report_finding)
 
     evidence_book = [
         EvidenceBookEntry(
@@ -524,12 +558,28 @@ def run_case(*, case_id: str, evidence_path: Path, case_workspace: Path, expecte
                 review_notes=f"event_records={len(event_content.records)}, truncated={str(event_content.truncated).lower()}, malicious_classification=not_claimed",
             )
         )
+    if correlation_report_finding is not None:
+        evidence_book.append(
+            EvidenceBookEntry(
+                finding_id="F006",
+                evidence_ref=correlation_report_finding.evidence_refs[0],
+                source_reference="exports/correlation_summary.json",
+                artifact_family="Cross-artifact correlation",
+                extraction_action="Bounded registry/event correlation and compromise-disposition check",
+                parser_status="ok",
+                review_notes=(
+                    f"status={correlation_summary.get('status')}, "
+                    f"confirmed_compromise={str(correlation_summary.get('confirmed_compromise')).lower()}, "
+                    f"timeline_anchors={len(correlation_summary.get('timeline_anchors', []))}"
+                ),
+            )
+        )
 
     correction_entries = [
         CorrectionLedgerEntry(
             original_candidate="Confirmed compromise or persistence on RD01.",
             reason_challenged="unsupported_claim",
-            follow_up_action="Ran bounded registry content extraction for SOFTWARE Run keys, SYSTEM services, and EVTX content, then kept the compromise claim dropped because timeline and deeper cross-artifact correlation were not parsed into compromise-level evidence.",
+            follow_up_action="Ran bounded registry content extraction for SOFTWARE Run keys, SYSTEM services, EVTX content, and a registry/event correlation summary, then kept the compromise claim dropped because deeper timeline and process/account corroboration still did not establish compromise-level evidence.",
             final_status="dropped",
             evidence_references=tuple([*findings[2].evidence_refs[:2], *findings[3].evidence_refs[:2], *(findings[4].evidence_refs[:2] if len(findings) > 4 else [])]),
         )
@@ -538,7 +588,7 @@ def run_case(*, case_id: str, evidence_path: Path, case_workspace: Path, expecte
         run_id=run_id,
         case_id=case_id,
         evidence_id=opened.evidence_id,
-        step_number=9,
+        step_number=10,
         tool_name="verify_claim",
         arguments={"claim": "Confirmed compromise or persistence on RD01", "required_confidence": "confirmed"},
         parser_status="ok",
@@ -550,13 +600,13 @@ def run_case(*, case_id: str, evidence_path: Path, case_workspace: Path, expecte
     accuracy = AccuracySummary(
         dataset="CASE-RD01 / base-rd-01-cdrive.E01 real local evidence",
         methodology="Real evidence was opened read-only, WSL forensic tools were used through the MCP backend, root inventory was replayed for consistency, and the reviewer-derived manifest was updated only with evidence-backed outcomes.",
-        findings_accuracy=f"Confirmed evidence and artifact findings: {len(findings)}, including bounded registry content parsing for SOFTWARE Run keys and SYSTEM services plus bounded EVTX content parsing when records are present. Confirmed compromise findings: 0. Official answer key: unavailable locally. Reviewer-derived manifest outcomes: partition/filesystem boundary answered, filesystem high-signal paths answered, bounded registry content partly answered, event content partly answered, full timeline remains unknown.",
+        findings_accuracy=f"Confirmed evidence and artifact findings: {len(findings)}, including bounded registry content parsing for SOFTWARE Run keys and SYSTEM services, bounded EVTX content parsing when records are present, and a bounded registry/event correlation summary. Confirmed compromise findings: 0. Official answer key: unavailable locally. Reviewer-derived manifest outcomes: partition/filesystem boundary answered, filesystem high-signal paths answered, bounded registry content answered, event content partly answered, bounded correlation answered, full Plaso timeline remains unknown.",
         false_positives=[],
-        missed_artifacts=["Full timeline content not parsed in this bounded run.", "Registry analysis is limited to SOFTWARE Run keys and SYSTEM services.", "Event analysis is bounded to extracted EVTX records and is not cross-correlated into a compromise narrative."],
+        missed_artifacts=["Full Plaso timeline content not parsed in this bounded run.", "Registry analysis is limited to SOFTWARE Run keys and SYSTEM services.", "Event analysis is bounded to extracted EVTX records; deeper process/account/timeline corroboration remains open."],
         hallucination_controls=["Unsupported compromise/persistence claim was dropped.", "No confirmed malicious finding is reported without evidence references.", "Synthetic fixture metrics are not reused as real accuracy."],
         evidence_integrity="Original evidence remained read-only; snapshot comparison after the run did not detect size, mtime, or SHA256 change.",
         limits=["WSL toolchain is SIFT-compatible but not the official SANS SIFT OVA.", "This run proves real evidence access and bounded artifact discovery, not full incident reconstruction.", "No official answer key was available in local materials."],
-        untested_families=["Full Plaso timeline", "Registry plugins beyond Run keys and services", "Cross-artifact event/timeline/registry correlation"],
+        untested_families=["Full Plaso timeline", "Registry plugins beyond Run keys and services", "Deeper process/account/timeline correlation beyond the bounded registry/event summary"],
         rejected_unsupported_claims=["Confirmed compromise or persistence on RD01"],
         baseline_comparison="No fair external baseline run was performed; baseline comparison remains future scope.",
     )
@@ -572,13 +622,14 @@ def run_case(*, case_id: str, evidence_path: Path, case_workspace: Path, expecte
             "Root and high-signal filesystem inventory",
             "Bounded SOFTWARE Run key and SYSTEM service registry parsing",
             "Bounded EVTX event content parsing",
+            "Bounded registry/event correlation and compromise-disposition check",
             "Replay consistency for root inventory sample",
         ],
         confirmed_findings=findings,
         inferred_findings=[],
         rejected_claims=["Confirmed compromise or persistence on RD01"],
         limitations=accuracy.limits,
-        next_actions=["Expand registry parsing beyond Run keys and services.", "Correlate parsed event content with registry and timeline anchors.", "Run timeline generation if runtime budget allows.", "Replace reviewer-derived manifest entries if official ground truth becomes available."],
+        next_actions=["Expand registry parsing beyond Run keys and services.", "Run full Plaso timeline generation if runtime budget allows.", "Correlate full timeline anchors with process/account and persistence records.", "Replace reviewer-derived manifest entries if official ground truth becomes available."],
         evidence_book=evidence_book,
         correction_entries=correction_entries,
         accuracy=accuracy,
@@ -593,6 +644,7 @@ def run_case(*, case_id: str, evidence_path: Path, case_workspace: Path, expecte
                     ("extract_registry_persistence", findings[3].evidence_refs[0]),
                     ("extract_registry_persistence", findings[3].evidence_refs[0]),
                     ("extract_event_records", findings[4].evidence_refs[0] if len(findings) > 4 else "exports/event_content_summary.json"),
+                    ("verify_claim", correlation_report_finding.evidence_refs[0] if correlation_report_finding else "exports/correlation_summary.json"),
                     ("verify_claim", "reports/correction_ledger.md"),
                 ],
                 start=1,
@@ -626,6 +678,8 @@ def run_case(*, case_id: str, evidence_path: Path, case_workspace: Path, expecte
             "registry_run_key_records": len(run_key_content.records),
             "registry_service_records": len(service_content.records),
             "event_content_records": len(event_content.records),
+            "correlation_findings": len(correlation_summary.get("correlation_findings", [])),
+            "correlation_timeline_anchors": len(correlation_summary.get("timeline_anchors", [])),
         },
         "evidence_unchanged": evidence_unchanged.passed,
     }

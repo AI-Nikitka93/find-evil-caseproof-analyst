@@ -10,10 +10,12 @@ from pathlib import Path
 from typing import Any
 from urllib.parse import urlparse
 
-
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
+
+from src.real_validation import validate_correlation_summary
+
 PUBLIC_REPO_URL = "https://github.com/AI-Nikitka93/find-evil-caseproof-analyst"
 REQUIRED_FILES = (
     "README.md",
@@ -28,6 +30,7 @@ REQUIRED_FILES = (
     "docs/public_real_execution_log_sample.jsonl",
     "docs/public_real_traceability_packet.md",
     "docs/reviewer_traceability_walkthrough.md",
+    "docs/judging_17_readiness.md",
     "scripts/demo_rehearsal.py",
 )
 SUPPORTED_VIDEO_HOST_MARKERS = (
@@ -170,6 +173,20 @@ def _check_demo_rehearsal_assets(root: Path) -> GateStatus:
     return GateStatus(ok=True, detail="demo rehearsal assets prove real evidence, artifact depth, and self-correction")
 
 
+def _check_correlation_summary(root: Path) -> GateStatus:
+    path = root / "cases" / "CASE-RD01" / "exports" / "correlation_summary.json"
+    if not path.is_file():
+        return GateStatus(ok=False, detail="missing cases/CASE-RD01/exports/correlation_summary.json")
+    try:
+        payload = json.loads(_read(path))
+    except json.JSONDecodeError:
+        return GateStatus(ok=False, detail="correlation summary is not valid JSON")
+    result = validate_correlation_summary(payload)
+    if not result.passed:
+        return GateStatus(ok=False, detail="invalid correlation summary: " + ", ".join(result.blockers))
+    return GateStatus(ok=True, detail="correlation summary proves bounded correlation and explicit compromise disposition")
+
+
 def _check_required_markdown_links(root: Path) -> GateStatus:
     surfaces = (
         "README.md",
@@ -216,6 +233,7 @@ def build_final_submission_audit(
         "license": _check_license(root),
         "public_trace": _check_public_trace(root),
         "demo_rehearsal_assets": _check_demo_rehearsal_assets(root),
+        "correlation_summary": _check_correlation_summary(root),
         "required_markdown_links": _check_required_markdown_links(root),
         "public_repo_sync": GateStatus(ok=git_status.ok, detail=git_status.detail),
     }

@@ -283,6 +283,8 @@ python scripts/final_submission_audit.py --demo-video-url VIDEO_URL --devpost-ur
   local readiness audit against the FIND EVIL! requirements.
 - [`docs/reviewer_traceability_walkthrough.md`](docs/reviewer_traceability_walkthrough.md):
   judge path from finding to evidence reference to execution log.
+- [`docs/judging_17_readiness.md`](docs/judging_17_readiness.md):
+  criterion-by-criterion map for the final judge-facing demo and Devpost text.
 - [`docs/final_submission_package.md`](docs/final_submission_package.md):
   Devpost-ready project description and required component map.
 - [`docs/public_release_manifest.md`](docs/public_release_manifest.md):
@@ -304,8 +306,9 @@ python scripts/final_submission_audit.py --demo-video-url VIDEO_URL --devpost-ur
   demo; Groq is implemented and currently passes API readiness. OpenRouter
   short smoke runs are useful for showing the bounded model loop, but the
   deterministic real evidence run remains the primary proof path for the video.
-- Bounded event-log content parsing is now present; full timeline and deeper
-  registry/event correlation remain open.
+- Bounded event-log content parsing and bounded registry/event correlation are
+  now present; full Plaso timeline and deeper process/account corroboration
+  remain open.
 - Demo video upload and Devpost submission remain external gates. Draft text,
   recording script, and machine-checkable rehearsal command are now included;
   `scripts/final_submission_audit.py` is the final 100-point gate before

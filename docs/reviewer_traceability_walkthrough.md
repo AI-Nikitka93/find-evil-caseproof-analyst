@@ -110,9 +110,10 @@ Expected result:
 
 - artifact families are confirmed as present;
 - no malicious finding is inferred from presence alone;
-- bounded registry Run-key/service content and bounded EVTX event content are
-  parsed, but full timeline and deeper registry/event correlation remain open
-  until parsed into content-level evidence.
+- bounded registry Run-key/service content, bounded EVTX event content, and
+  bounded registry/event correlation are parsed, but full Plaso timeline and
+  deeper process/account corroboration remain open until parsed into
+  content-level evidence.
 
 ## Finding F005 Chain
 
@@ -139,6 +140,32 @@ Expected result:
 - the local Plaso dependency issue is made survivable by the `python-evtx`
   fallback;
 - no compromise finding is inferred from event presence alone.
+
+## Finding F006 Chain
+
+Final finding:
+
+- `F006`: bounded registry/event correlation was performed and kept compromise
+  status unconfirmed pending deeper timeline and process/account corroboration.
+
+Trace chain:
+
+| Layer | What to inspect |
+|---|---|
+| Final report | `cases/CASE-RD01/reports/final_analyst_report.md`, finding `F006` |
+| Evidence book | `cases/CASE-RD01/reports/evidence_book.md`, `F006` entry |
+| Source action | bounded correlation over registry and event summaries |
+| Export | `cases/CASE-RD01/exports/correlation_summary.json` |
+| Accuracy note | `docs/accuracy_report.md`, `RD01-CORR-002` row |
+| Execution log | `cases/CASE-RD01/logs/agent_execution.jsonl`, `output_reference=exports/correlation_summary.json` |
+| Public excerpt | `docs/public_real_execution_log_sample.jsonl`, step `9` |
+
+Expected result:
+
+- Event ID 1102 remains visible as a high-signal review item;
+- registry persistence surfaces remain visible for reviewer correlation;
+- `confirmed_compromise` stays `false` because the bounded evidence does not
+  yet establish malicious intent or full attack reconstruction.
 
 ## Self-Correction Chain
 

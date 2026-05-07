@@ -13,6 +13,6 @@
 | GitHub repository packaging | DONE | `README.md`, `LICENSE`, `docs/architecture.md` |
 | Submission readiness audit | DONE | `docs/submission_readiness_audit.md`, `docs/dataset_documentation.md` |
 | API and SIFT environment readiness checks | DONE | `src/agent.py --check-api`, `scripts/check_env.py`, `tests/test_env_check.py` |
-| Real bounded CASE-RD01 evidence run | DONE | Selected `.E01` evidence is present; SIFT-compatible tools are available through WSL; run produced evidence integrity, filesystem, registry Run-key/service content, correction ledger, accuracy report, and public-safe trace artifacts. |
+| Real bounded CASE-RD01 evidence run | DONE | Selected `.E01` evidence is present; SIFT-compatible tools are available through WSL; run produced evidence integrity, filesystem, registry Run-key/service content, EVTX content, bounded registry/event correlation, correction ledger, accuracy report, and public-safe trace artifacts. |
 
 Next step group: demo video recording/upload, Devpost form submission, and final public-link verification.

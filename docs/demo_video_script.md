@@ -96,8 +96,9 @@ Narration:
 
 > The important part is not that the agent says something confident. It
 > challenges a tempting compromise claim and drops it because this bounded run
-> has parsed bounded SOFTWARE Run-key and SYSTEM service registry content, but
-> has not parsed event or timeline content into compromise evidence.
+> has parsed bounded SOFTWARE Run-key and SYSTEM service registry content,
+> bounded EVTX event content, and bounded registry/event correlation, but has
+> not established full timeline/process/account corroboration.
 
 Commands:
 
@@ -110,8 +111,9 @@ Point out:
 
 - rejected unsupported claim;
 - zero confirmed compromise findings;
-- bounded event content is parsed, while full timeline and deeper
-  registry/event correlation remain visible as limitations.
+- bounded event content and bounded registry/event correlation are parsed,
+  while full Plaso timeline and deeper process/account corroboration remain
+  visible as limitations.
 
 ### 2:30-3:20 Evidence Chain
 

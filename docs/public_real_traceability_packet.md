@@ -45,7 +45,8 @@ autonomous AI smoke logs carry model usage when the provider returns it.
 | 6 | `extract_registry_persistence` | `ok` | `exports/registry_content_summary.json` | None | Extract SOFTWARE Run key content after copying the hive out of the evidence image with icat. |
 | 7 | `extract_registry_persistence` | `ok` | `exports/registry_content_summary.json` | None | Extract SYSTEM service content to move beyond artifact presence into bounded registry analysis. |
 | 8 | `extract_event_records` | `partial` | `exports/event_content_summary.json` | None | Parse bounded Windows event-log content from extracted EVTX files instead of stopping at path presence. |
-| 9 | `verify_claim` | `ok` | `reports/correction_ledger.md` | Unsupported compromise claim dropped from confirmed findings. | Challenge an attractive but unsupported compromise claim before final reporting. |
+| 9 | `verify_claim` | `ok` | `exports/correlation_summary.json` | None | Correlate registry persistence records and EVTX watchlist events before accepting or rejecting compromise claims. |
+| 10 | `verify_claim` | `ok` | `reports/correction_ledger.md` | Unsupported compromise claim dropped from confirmed findings. | Challenge an attractive but unsupported compromise claim before final reporting. |
 
 ## Self-Correction Signal
 
@@ -59,7 +60,8 @@ without cross-artifact evidence.
 ## Limits
 
 - This is a redacted execution-log excerpt, not the full local case workspace.
-- Registry Run-key, service content, and bounded event-log content are parsed
-  in this run; full timeline and deeper cross-artifact correlation remain future work.
+- Registry Run-key, service content, bounded event-log content, and a
+  bounded registry/event correlation summary are parsed in this run;
+  full Plaso timeline and deeper process/account corroboration remain future work.
 - The public log proves traceability for the bounded real run, not full
   incident reconstruction.

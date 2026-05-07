@@ -13,7 +13,7 @@ The first full release is not submission-ready unless every required contest art
 | Demo video | Live terminal screencast shows real evidence, audio narration, and visible self-correction. | Demo video is not created. |
 | Architecture diagram | Diagram clearly shows agent, SIFT tools, MCP server, evidence source, output flow, and trust boundary. | Public rendering still needs final verification. |
 | Written project description | Story explains what it does, how it works at product level, challenges, learnings, tradeoffs, and next steps. | Devpost form is not submitted. |
-| Dataset documentation | Real evidence source, tested scope, observed findings, and limitations are documented. | Bounded registry and event content are documented; full timeline and deeper correlation remain open. |
+| Dataset documentation | Real evidence source, tested scope, observed findings, and limitations are documented. | Bounded registry, event, and correlation content are documented; full Plaso timeline and deeper process/account corroboration remain open. |
 | Accuracy report | Real-run findings, false positives, missed artifacts, hallucinated claims, and evidence integrity are documented. | Full incident reconstruction and official answer-key comparison remain unavailable. |
 | Try-it-out instructions | A judge can follow setup, readiness checks, run path, expected outputs, and troubleshooting. | Clean external judge machine verification remains external. |
 | Agent execution logs | Logs from the real case trace findings to actions and source references. | Full local log is under ignored `cases/`; public repo uses `docs/public_real_execution_log_sample.jsonl`. |

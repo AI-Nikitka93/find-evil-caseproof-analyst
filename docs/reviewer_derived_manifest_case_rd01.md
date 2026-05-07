@@ -2,7 +2,7 @@
 
 Date: 2026-05-06
 
-Status: real bounded evidence pass completed with bounded registry and event content; full incident reconstruction still open.
+Status: real bounded evidence pass completed with bounded registry, event, and correlation content; full incident reconstruction still open.
 
 ## Manifest Identity
 
@@ -13,7 +13,7 @@ Status: real bounded evidence pass completed with bounded registry and event con
 | Evidence source | FIND EVIL starter case data / SRL-2018-Compromised Enterprise Network |
 | Official answer key status | Not available in the local project materials. |
 | Manifest type | Reviewer-derived manifest, not official ground truth. |
-| Current blocker | Full timeline and deeper registry/event correlation remain open; full long-run autonomous investigation is not yet claimed. |
+| Current blocker | Full Plaso timeline and deeper process/account corroboration remain open; full long-run autonomous investigation is not yet claimed. |
 
 ## Required Limitation Statement
 
@@ -30,7 +30,7 @@ This manifest is reviewer-derived and is not an official answer key. It exists t
 | File type check | First bytes show EWF `EVF` signature. |
 | Storage rule | Stored in ignored local-only `evidence/` folder and marked read-only. |
 | Review environment | WSL Ubuntu forensic toolchain; SIFT-compatible commands available locally. |
-| Real accuracy status | Partial real validation exists for evidence access, artifact-family availability, bounded SOFTWARE Run-key/SYSTEM service registry content, and bounded EVTX event content. |
+| Real accuracy status | Partial real validation exists for evidence access, artifact-family availability, bounded SOFTWARE Run-key/SYSTEM service registry content, bounded EVTX event content, and bounded registry/event correlation. |
 
 ## Expected Items To Fill From Real Review
 
@@ -38,11 +38,11 @@ This manifest is reviewer-derived and is not an official answer key. It exists t
 |---|---|---|---|---|---|
 | RD01-PARTITION-001 | Partition layout | Which partition should be analyzed? | The image behaves as an NTFS volume image at sector `0`; `mmls` did not provide a partition table and `fsstat` supplied the volume boundary. | Medium | WSL toolchain, not official SIFT OVA. |
 | RD01-FS-001 | Filesystem inventory | Which paths are high-signal for the case story? | Root inventory and high-signal inventory completed; registry hives, event logs, user hives, and McAfee Agent event paths were located. | Medium | This is artifact-family availability, not content-level compromise proof. |
-| RD01-TIME-001 | Timeline | Which events anchor the attack story? | Unknown. | Low | Full Plaso timeline content was not parsed in the bounded pass. |
-| RD01-REG-001 | Registry persistence | Which persistence artifacts are present or absent? | SOFTWARE Run keys and SYSTEM services were extracted and parsed into bounded registry content records. No malicious persistence finding is confirmed from those records alone. | Medium | Deeper registry correlation remains open. |
-| RD01-EVT-001 | Event records | Which event records support or contradict the story? | Security, System, and Application EVTX files were extracted; the bounded run parsed 120 Security event records including Event ID 1102, 4624, 4672, and 4799 examples. | Medium | Event records are parsed but not yet correlated into a compromise narrative. |
+| RD01-TIME-001 | Timeline | Which events anchor the attack story? | Bounded event-derived anchors exist in `correlation_summary.json`, including Event ID 1102, 4624, 4672, and 4688 samples. | Medium | Full Plaso timeline content was not parsed in the bounded pass. |
+| RD01-REG-001 | Registry persistence | Which persistence artifacts are present or absent? | SOFTWARE Run keys and SYSTEM services were extracted and parsed into bounded registry content records. No malicious persistence finding is confirmed from those records alone. | Medium | Registry plugins beyond Run keys/services remain open. |
+| RD01-EVT-001 | Event records | Which event records support or contradict the story? | Security, System, and Application EVTX files were extracted; the bounded run parsed 120 Security event records and correlated watchlist event counts with registry persistence surfaces. | Medium | Deeper process/account corroboration remains open. |
 | RD01-CORR-001 | Correction candidate | Which claim can be visibly corrected by follow-up evidence? | `Confirmed compromise or persistence on RD01` was challenged and dropped. | Medium | Controlled correction from bounded real run, not a full incident conclusion. |
-| RD01-NEG-001 | Negative control | Which expected artifact family is absent or inconclusive? | Full timeline and deeper registry/event correlation remain unknown rather than overclaimed. | Medium | Unknowns must not be treated as clean results. |
+| RD01-NEG-001 | Negative control | Which expected artifact family is absent or inconclusive? | Full Plaso timeline and deeper process/account corroboration remain unknown rather than overclaimed. | Medium | Unknowns must not be treated as clean results. |
 
 ## Promotion Rules
 

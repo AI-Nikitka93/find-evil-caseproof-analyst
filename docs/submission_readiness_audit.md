@@ -8,7 +8,7 @@ Verdict: **LOCAL PACKAGE PREPARED - external Devpost gates still block final sub
 
 | Check | Result |
 |---|---|
-| `py -m pytest` | PASS, 82 tests on 2026-05-07 after event-content fallback hardening |
+| `py -m pytest` | PASS, 98 tests on 2026-05-07 after bounded correlation and final-gate hardening |
 | `py -m py_compile ...` | PASS |
 | `py scripts\check_env.py --strict` | PASS for required forensic command availability through WSL |
 | `py scripts\preflight_case.py ... --no-api-required --strict` | PASS for deterministic MCP/backend evidence run |
@@ -18,9 +18,9 @@ Verdict: **LOCAL PACKAGE PREPARED - external Devpost gates still block final sub
 | `py -m src.agent --provider openrouter ... CASE-RD01-AUTO-SHORT-PASS ... --max-iterations 4` | PASS after agent-loop hardening; report written without context-overflow failure |
 | `py scripts\run_real_case.py ... --json` | PASS, generated real CASE-RD01 local outputs |
 | `py scripts\audit_real_validation.py --case-workspace "M:\Projects\Konkurs\Find Evil!\cases\CASE-RD01" --json --strict` | PASS |
-| `py scripts\generate_public_trace_packet.py --json --strict` | PASS, generated 9 public-safe real execution-log records including registry and event extraction |
+| `py scripts\generate_public_trace_packet.py --json --strict` | PASS, generated 10 public-safe real execution-log records including registry extraction, event extraction, bounded correlation, and self-correction |
 | `py scripts\demo_rehearsal.py --json --strict` | PASS, confirms demo script, public trace, local CASE-RD01 reports, real evidence opening, artifact-depth steps, and visible self-correction story |
-| `py scripts\final_submission_audit.py --json` | BLOCKED as designed until public video URL, submitted Devpost URL, and clean public repo sync are all present; now also checks demo rehearsal assets and required local markdown links |
+| `py scripts\final_submission_audit.py --json` | BLOCKED as designed until public video URL, submitted Devpost URL, and clean public repo sync are all present; now also checks demo rehearsal assets, correlation summary, and required local markdown links |
 | `py scripts\audit_release_controls.py --json --strict` | PASS on last full gate run before this audit refresh |
 | `py scripts\audit_design_quality.py --strict` | PASS on last full gate run before this audit refresh |
 | `py scripts\audit_visual_package.py --strict` | PASS on last full gate run before this audit refresh |
@@ -39,6 +39,7 @@ Verdict: **LOCAL PACKAGE PREPARED - external Devpost gates still block final sub
 | Execution logs | Present locally and as public-safe excerpt | `cases/CASE-RD01/logs/agent_execution.jsonl`, `docs/public_real_execution_log_sample.jsonl`, `docs/public_real_traceability_packet.md` |
 | Registry content summary | Present locally for real run | `cases/CASE-RD01/exports/registry_content_summary.json` |
 | Event content summary | Present locally for real run | `cases/CASE-RD01/exports/event_content_summary.json` |
+| Correlation summary | Present locally for real run | `cases/CASE-RD01/exports/correlation_summary.json` |
 | Evidence book | Present locally for real run | `cases/CASE-RD01/reports/evidence_book.md` |
 | Correction ledger | Present locally for real run | `cases/CASE-RD01/reports/correction_ledger.md` |
 | Demo video | Missing | Not recorded |
@@ -47,15 +48,16 @@ Verdict: **LOCAL PACKAGE PREPARED - external Devpost gates still block final sub
 | Demo rehearsal gate | Ready | `scripts/demo_rehearsal.py` |
 | Judge try-it-out instructions | Ready | `docs/judge_try_it_out.md` |
 | Quality gate matrix | Ready | `docs/final_quality_gate_matrix.md` |
+| Judging 17/17 readiness map | Ready | `docs/judging_17_readiness.md` |
 | Public repository publication | Verified | https://github.com/AI-Nikitka93/find-evil-caseproof-analyst |
 
 ## Judging Criteria Mapping
 
 | Criterion | Current evidence | Status |
 |---|---|---|
-| Autonomous execution quality | Bounded `src.agent` exists; OpenRouter OpenAI-compatible runtime is implemented and smoke-tested against real evidence. Full long-run autonomous investigation remains open. | PARTIAL |
-| IR accuracy | Real bounded CASE-RD01 findings are evidence-linked; SOFTWARE Run keys, SYSTEM services, and bounded EVTX records are parsed; no compromise finding is claimed. | PARTIAL+ |
-| Breadth and depth | Narrow Windows disk-image lane works for evidence access, volume detection, filesystem artifact discovery, bounded registry content, and bounded event content. Full timeline and deeper correlation remain open. | PARTIAL+ |
+| Autonomous execution quality | Bounded `src.agent` exists; OpenRouter OpenAI-compatible runtime is implemented and smoke-tested against real evidence. Deterministic real pass now includes a self-correction and bounded correlation layer. Full long-run autonomous investigation remains open. | PARTIAL+ |
+| IR accuracy | Real bounded CASE-RD01 findings are evidence-linked; SOFTWARE Run keys, SYSTEM services, bounded EVTX records, and bounded registry/event correlation are parsed; no compromise finding is claimed. | STRONG-PARTIAL |
+| Breadth and depth | Narrow Windows disk-image lane works for evidence access, volume detection, filesystem artifact discovery, bounded registry content, bounded event content, and bounded correlation. Full Plaso timeline and deeper process/account corroboration remain open. | STRONG-PARTIAL |
 | Constraint implementation | Fixed MCP tools, no generic shell, read-only evidence boundary, real-output validation gates. | STRONG |
 | Audit trail | Real JSONL execution log, public-safe real excerpt, evidence book, correction ledger, replay consistency, artifact index. | STRONG |
 | Usability | README, preflight, judge runbook, troubleshooting, recovery instructions, and public GitHub URL exist. | PARTIAL |
@@ -64,7 +66,7 @@ Verdict: **LOCAL PACKAGE PREPARED - external Devpost gates still block final sub
 
 1. Demo video is not recorded and uploaded.
 2. Devpost form is not submitted with public repo and video URLs.
-3. Full timeline and deeper registry/event correlation remain open.
+3. Full Plaso timeline and deeper process/account corroboration remain open.
 4. Raw local `cases/CASE-RD01/` outputs remain local-only by default; the
    public-safe real execution excerpt is now published under `docs/`.
 5. Final submission audit stays blocked until public video and Devpost URLs are

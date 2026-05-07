@@ -17,12 +17,14 @@ steps are complete; GO for public repository package.**
 | Real bounded CASE-RD01 pass exists | GO | `cases/CASE-RD01/` local package |
 | Bounded registry content proof exists | GO | `cases/CASE-RD01/exports/registry_content_summary.json` |
 | Bounded event content proof exists | GO | `cases/CASE-RD01/exports/event_content_summary.json` |
+| Bounded correlation proof exists | GO | `cases/CASE-RD01/exports/correlation_summary.json` |
 | Execution log exists locally | GO | `cases/CASE-RD01/logs/agent_execution.jsonl` |
 | Traceability walkthrough exists | GO | `docs/reviewer_traceability_walkthrough.md` |
 | Devpost text draft exists | GO | `docs/final_submission_package.md` |
 | Demo script exists | GO | `docs/demo_video_script.md` |
 | Demo rehearsal gate exists | GO | `scripts/demo_rehearsal.py --strict` verifies required demo story assets before recording |
 | Judge runbook exists | GO | `docs/judge_try_it_out.md` |
+| Judging readiness map exists | GO | `docs/judging_17_readiness.md` |
 | Public GitHub URL | GO | https://github.com/AI-Nikitka93/find-evil-caseproof-analyst |
 | Final submission audit exists | GO | `scripts/final_submission_audit.py --json` |
 
@@ -56,11 +58,12 @@ These limitations are acceptable if stated honestly:
 
 - first release is a narrow Windows disk triage lane;
 - current real run confirms evidence integrity, volume access, artifact-family
-  availability, bounded SOFTWARE Run-key/SYSTEM service parsing, and
-  correction behavior;
+  availability, bounded SOFTWARE Run-key/SYSTEM service parsing, bounded
+  registry/event correlation, and correction behavior;
 - no confirmed malicious finding is claimed;
-- bounded event content is parsed, while full timeline and deeper
-  registry/event correlation remain future work;
+- bounded event content and bounded registry/event correlation are parsed,
+  while full Plaso timeline and deeper process/account corroboration remain
+  future work;
 - WSL runtime is SIFT-compatible for tested tools but not the official SANS
   SIFT OVA;
 - OpenRouter is the current selected free/low-cost demo runtime path;

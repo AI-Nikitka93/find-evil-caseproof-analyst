@@ -75,9 +75,9 @@ Current limitation:
 
 - local API readiness does not equal full autonomous investigation completion;
   the real bounded CASE-RD01 pass exists through a SIFT-compatible WSL command
-  surface and includes bounded SOFTWARE Run-key/SYSTEM service parsing plus
-  bounded EVTX event parsing, but full timeline and deeper registry/event
-  correlation remain open.
+  surface and includes bounded SOFTWARE Run-key/SYSTEM service parsing,
+  bounded EVTX event parsing, and bounded registry/event correlation, but full
+  Plaso timeline and deeper process/account corroboration remain open.
 
 ## Judge-Readable Trust Boundary Diagram
 

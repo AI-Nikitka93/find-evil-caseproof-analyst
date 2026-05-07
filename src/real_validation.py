@@ -15,6 +15,7 @@ REQUIRED_REAL_RUN_OUTPUTS = (
     "reports/evidence_book.md",
     "reports/correction_ledger.md",
     "reports/real_run_accuracy_report.md",
+    "exports/correlation_summary.json",
     "logs/agent_execution.jsonl",
 )
 ACCEPTED_UNSUPPORTED_DISPOSITIONS = {"dropped", "downgraded", "needs_human_review", "corrected"}
@@ -177,6 +178,31 @@ def validate_degraded_environment_behavior(preflight_report: dict[str, Any]) -> 
     return ValidationGateResult(passed=not blockers, blockers=blockers)
 
 
+def validate_correlation_summary(summary: dict[str, Any]) -> ValidationGateResult:
+    blockers: list[str] = []
+    if not isinstance(summary.get("confirmed_compromise"), bool):
+        blockers.append("missing_confirmed_compromise_boolean")
+    if not summary.get("status"):
+        blockers.append("missing_correlation_status")
+    findings = summary.get("correlation_findings", [])
+    if not isinstance(findings, list):
+        blockers.append("invalid_correlation_findings")
+        findings = []
+    for finding in findings:
+        if not isinstance(finding, dict):
+            blockers.append("invalid_correlation_finding")
+            continue
+        finding_id = str(finding.get("finding_id") or "unknown")
+        refs = finding.get("evidence_refs", [])
+        if not isinstance(refs, list) or not refs:
+            blockers.append(f"correlation_finding_without_evidence:{finding_id}")
+    rejected = summary.get("rejected_claims", [])
+    rejected_text = " ".join(str(item).lower() for item in rejected) if isinstance(rejected, list) else ""
+    if "confirmed compromise" not in rejected_text:
+        blockers.append("missing_rejected_compromise_claim")
+    return ValidationGateResult(passed=not blockers, blockers=blockers)
+
+
 def validate_redaction_surfaces(surface_texts: dict[str, str]) -> ValidationGateResult:
     blockers: list[str] = []
     for name, text in surface_texts.items():
@@ -234,6 +260,19 @@ def audit_real_validation_workspace(case_workspace: Path) -> RealValidationAudit
     checks["execution_log_parseable"] = _jsonl_parseable(log_path)
     if log_path.is_file() and not checks["execution_log_parseable"]:
         blockers.append("execution_log_not_parseable")
+
+    correlation_path = case_workspace / "exports" / "correlation_summary.json"
+    if correlation_path.is_file():
+        try:
+            correlation_payload = json.loads(correlation_path.read_text(encoding="utf-8", errors="replace"))
+        except json.JSONDecodeError:
+            correlation_result = ValidationGateResult(False, ["correlation_summary_not_json"])
+        else:
+            correlation_result = validate_correlation_summary(correlation_payload)
+    else:
+        correlation_result = ValidationGateResult(False, ["missing_correlation_summary"])
+    checks["correlation_summary_valid"] = correlation_result.passed
+    blockers.extend(correlation_result.blockers)
 
     return RealValidationAudit(
         status="ok" if all(checks.values()) and not blockers else "blocked",

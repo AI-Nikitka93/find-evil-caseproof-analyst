@@ -1,6 +1,6 @@
 {
   "current_goal": "Build a read-only Custom MCP Server for Windows disk triage.",
-  "current_task": "Final local submission package prepared with public-safe real execution trace, bounded registry/event content proof, demo rehearsal gate, and verified public GitHub repository; remaining blockers are demo video and Devpost gates.",
+  "current_task": "Final local submission package prepared with public-safe real execution trace, bounded registry/event/correlation proof, demo rehearsal gate, and verified public GitHub repository; remaining blockers are demo video and Devpost gates.",
   "status": "PUBLIC_REPO_READY_EXTERNAL_SUBMISSION_BLOCKED",
   "active_step": "Record/upload demo video, paste Devpost text, and verify final public links.",
   "next_step": "Create verified public demo video URL, then run final public link audit before Devpost submission.",
@@ -8,7 +8,7 @@
     "demo video is not recorded or uploaded",
     "public video visibility is not verified",
     "Devpost form is not submitted",
-    "full timeline and deeper registry/event correlation remain open as accepted limitations"
+    "full Plaso timeline and deeper process/account corroboration remain open as accepted limitations"
   ],
   "artifacts": [
     "README.md",
@@ -19,6 +19,7 @@
     "docs/mcp_architecture.md",
     "docs/accuracy_report.md",
     "docs/reviewer_traceability_walkthrough.md",
+    "docs/judging_17_readiness.md",
     "docs/public_real_execution_log_sample.jsonl",
     "docs/public_real_traceability_packet.md",
     "docs/final_quality_gate_matrix.md",
@@ -33,6 +34,7 @@
     "src/agent.py",
     "src/prompts.py",
     "src/claim_policy.py",
+    "src/correlation.py",
     "src/reporting.py",
     "src/phase_gate.py",
     "src/output_package.py",
@@ -51,6 +53,7 @@
     "scripts/audit_real_validation.py",
     "tests/test_server_contracts.py",
     "tests/test_agent_contracts.py",
+    "tests/test_correlation.py",
     "tests/test_demo_rehearsal.py",
     "tests/test_env_check.py",
     "tests/test_claim_policy.py",
@@ -68,6 +71,7 @@
     "cases/CASE-RD01/reports/correction_ledger.md",
     "cases/CASE-RD01/reports/real_run_accuracy_report.md",
     "cases/CASE-RD01/exports/event_content_summary.json",
+    "cases/CASE-RD01/exports/correlation_summary.json",
     "cases/CASE-RD01/logs/agent_execution.jsonl"
   ],
   "updated_at": "2026-05-07"

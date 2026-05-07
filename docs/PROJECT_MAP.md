@@ -184,9 +184,10 @@ Still open:
 - Demo video recording, public upload, and visibility verification.
 - Devpost form submission with public links.
 - Full long-run autonomous investigation beyond the short OpenRouter smoke run.
-- Full timeline and deeper registry/event correlation beyond the
-  bounded pass. SOFTWARE Run-key and SYSTEM service parsing are now covered by
-  the current CASE-RD01 run.
+- Full Plaso timeline and deeper process/account corroboration beyond the
+  bounded pass. SOFTWARE Run-key, SYSTEM service, EVTX, and bounded
+  registry/event correlation parsing are now covered by the current CASE-RD01
+  run.
 
 ## Key Risks
 

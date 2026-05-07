@@ -24,6 +24,7 @@ def _write_minimum_package(root: Path) -> None:
     )
     (root / "docs" / "public_real_traceability_packet.md").write_text("trace\n", encoding="utf-8")
     (root / "docs" / "reviewer_traceability_walkthrough.md").write_text("walkthrough\n", encoding="utf-8")
+    (root / "docs" / "judging_17_readiness.md").write_text("judging readiness\n", encoding="utf-8")
     (root / "docs" / "demo_video_script.md").write_text(
         "live terminal execution\nreal evidence\nself-correction sequence\ntraceability chain\n",
         encoding="utf-8",
@@ -45,6 +46,14 @@ def _write_minimum_package(root: Path) -> None:
         "real_run_accuracy_report.md",
     ):
         (reports / name).write_text("case output\n", encoding="utf-8")
+    exports = root / "cases" / "CASE-RD01" / "exports"
+    exports.mkdir(parents=True)
+    (exports / "correlation_summary.json").write_text(
+        '{"status":"review_required","confirmed_compromise":false,'
+        '"correlation_findings":[{"finding_id":"C001","evidence_refs":["ev:event:1"]}],'
+        '"rejected_claims":["Confirmed compromise on RD01"]}',
+        encoding="utf-8",
+    )
 
 
 def test_final_submission_audit_passes_when_external_urls_and_git_sync_are_ready(tmp_path: Path) -> None:
@@ -113,6 +122,21 @@ def test_final_submission_audit_blocks_broken_required_markdown_link(tmp_path: P
 
     assert report["status"] == "blocked"
     assert "required_markdown_links" in report["blockers"]
+
+
+def test_final_submission_audit_blocks_missing_correlation_summary(tmp_path: Path) -> None:
+    _write_minimum_package(tmp_path)
+    (tmp_path / "cases" / "CASE-RD01" / "exports" / "correlation_summary.json").unlink()
+
+    report = final_submission_audit.build_final_submission_audit(
+        root=tmp_path,
+        demo_video_url="https://youtu.be/example12345",
+        devpost_url="https://devpost.com/software/caseproof-analyst",
+        git_status=final_submission_audit.GitSyncStatus(ok=True, detail="clean and synced"),
+    )
+
+    assert report["status"] == "blocked"
+    assert "correlation_summary" in report["blockers"]
 
 
 def test_supported_video_hosts_are_limited_to_devpost_hosts() -> None:

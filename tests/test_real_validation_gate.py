@@ -8,6 +8,7 @@ from src.real_validation import (
     snapshot_evidence,
     validate_final_report_evidence_links,
     validate_degraded_environment_behavior,
+    validate_correlation_summary,
     validate_no_confirmed_finding_report,
     validate_original_evidence_unchanged,
     validate_outputs_under_workspace,
@@ -25,6 +26,30 @@ def test_real_run_outputs_block_until_required_artifacts_exist(tmp_path: Path) -
 
     assert report.passed is False
     assert set(report.missing_outputs) == set(REQUIRED_REAL_RUN_OUTPUTS)
+
+
+def test_correlation_summary_gate_requires_explicit_compromise_disposition() -> None:
+    accepted = validate_correlation_summary(
+        {
+            "status": "review_required",
+            "confirmed_compromise": False,
+            "correlation_findings": [{"finding_id": "C001", "evidence_refs": ["ev:event:1"]}],
+            "rejected_claims": ["Confirmed compromise on RD01"],
+        }
+    )
+    rejected = validate_correlation_summary(
+        {
+            "status": "review_required",
+            "correlation_findings": [{"finding_id": "C001", "evidence_refs": []}],
+            "rejected_claims": [],
+        }
+    )
+
+    assert accepted.passed is True
+    assert rejected.passed is False
+    assert "missing_confirmed_compromise_boolean" in rejected.blockers
+    assert "correlation_finding_without_evidence:C001" in rejected.blockers
+    assert "missing_rejected_compromise_claim" in rejected.blockers
 
 
 def test_real_run_outputs_pass_when_all_required_artifacts_exist(tmp_path: Path) -> None:

@@ -42,6 +42,7 @@ The real run produced these local artifacts:
 - `cases/CASE-RD01/exports/high_signal_inventory.json`;
 - `cases/CASE-RD01/exports/registry_content_summary.json`;
 - `cases/CASE-RD01/exports/event_content_summary.json`;
+- `cases/CASE-RD01/exports/correlation_summary.json`;
 - `cases/CASE-RD01/exports/preflight_report.json`.
 
 `py scripts\audit_real_validation.py --case-workspace "M:\Projects\Konkurs\Find Evil!\cases\CASE-RD01" --json --strict`
@@ -58,6 +59,7 @@ Confirmed evidence-backed findings from the real run:
 | `F003` | confirmed | High-signal Windows artifact families are present: registry hives, event logs, user hives, and McAfee agent event paths. |
 | `F004` | confirmed | `SOFTWARE` Run keys and `SYSTEM` service entries were extracted from the real image with `icat` and parsed through RegRipper into bounded registry content records. No malicious classification is asserted from this alone. |
 | `F005` | confirmed | `Security.evtx`, `System.evtx`, and `Application.evtx` were extracted from the real image and parsed into 120 bounded event records through the `python-evtx` fallback after local Plaso dependency degradation. No malicious classification is asserted from this alone. |
+| `F006` | confirmed | Bounded registry/event correlation was performed, Event ID 1102 was preserved as a high-signal review item, and compromise status remained unconfirmed pending deeper timeline and process/account corroboration. |
 
 Confirmed compromise findings:
 
@@ -70,9 +72,8 @@ Unsupported claims promoted to confirmed output:
 Rejected unsupported claim:
 
 - `Confirmed compromise or persistence on RD01` was challenged and dropped
-  because the bounded registry and event content did not establish compromise
-  and the run did not correlate full timeline/deeper artifacts into
-  compromise-level evidence.
+  because the bounded registry, event, and correlation content did not
+  establish compromise-level evidence.
 
 ## 4. Reviewer-Derived Manifest Comparison
 
@@ -84,9 +85,10 @@ answer key.
 |---|---|---|
 | `RD01-PARTITION-001` | The image behaves as a mounted/analyzable NTFS volume image at sector `0`; `mmls` is not the right source for a partition table here. | matched with limitation |
 | `RD01-FS-001` | Root inventory and high-signal path inventory produced records from the real `.E01`. | matched |
-| `RD01-TIME-001` | Full timeline content was not parsed in this bounded run. | unknown |
-| `RD01-REG-001` | SOFTWARE Run keys and SYSTEM services were extracted and parsed into bounded registry content records; deeper registry correlation remains open. | matched with limitation |
-| `RD01-EVT-001` | Security, System, and Application EVTX files were extracted and parsed into bounded event records; deeper correlation remains open. | matched with limitation |
+| `RD01-TIME-001` | Full Plaso timeline content was not parsed in this bounded run; bounded event-derived timeline anchors were recorded in `correlation_summary.json`. | matched with limitation |
+| `RD01-REG-001` | SOFTWARE Run keys and SYSTEM services were extracted and parsed into bounded registry content records. | matched with limitation |
+| `RD01-EVT-001` | Security, System, and Application EVTX files were extracted and parsed into bounded event records; bounded registry/event correlation was added. | matched with limitation |
+| `RD01-CORR-002` | `correlation_summary.json` records high-signal watchlist events, registry persistence surfaces, timeline anchors, and `confirmed_compromise=false`. | matched with limitation |
 | `RD01-CORR-001` | One unsupported compromise/persistence claim was visibly challenged and dropped. | matched |
 | `RD01-NEG-001` | Unknowns were preserved instead of upgraded into compromise claims. | matched |
 
@@ -109,7 +111,7 @@ Known unresolved real artifact families:
 - full Plaso timeline;
 - registry parsing beyond SOFTWARE Run keys and SYSTEM services;
 - event parsing beyond the first bounded 120 records;
-- content-level timeline, persistence-correlation, and execution findings;
+- deeper process/account/timeline corroboration beyond the bounded correlation summary;
 - official ground-truth comparison.
 
 These are not counted as confirmed negatives. They remain unknowns or next
@@ -139,13 +141,14 @@ This is now a real evidence pass, not only a synthetic fixture. It proves
 read-only evidence access, SIFT-compatible tool availability, bounded
 filesystem triage, bounded registry Run-key/service parsing, evidence-backed
 reporting, bounded EVTX event parsing, correction-ledger behavior, and replay
-consistency.
+consistency. The current pass also proves bounded registry/event correlation
+with explicit unconfirmed compromise disposition.
 
 It does **not** prove full incident reconstruction or final contest readiness.
 The next hard blockers are:
 
 - longer autonomous AI run with provider limits accounted for;
-- full timeline and deeper registry/event correlation;
+- full Plaso timeline and deeper process/account corroboration;
 - demo video;
 - Devpost description;
 - public repository publication and link verification.
