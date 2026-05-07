@@ -1,0 +1,12 @@
+.env
+.env.*
+!.env.example
+docs/*.local.md
+docs/superpowers/
+cases/
+fixtures/
+evidence/
+__pycache__/
+.pytest_cache/
+.playwright-mcp/
+УСЛОВИЯ.txt

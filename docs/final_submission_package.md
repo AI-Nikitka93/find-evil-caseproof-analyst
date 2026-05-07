@@ -1,0 +1,154 @@
+# Final Submission Package
+
+Date: 2026-05-07  
+Use: paste-ready Devpost text plus required component mapping.
+
+## Live Rule Snapshot
+
+Live Devpost facts checked on 2026-05-07:
+
+- Deadline: June 15, 2026 at 11:45 PM EDT.
+- Required public repository: GitHub, public, MIT or Apache 2.0 license.
+- Required local run support: setup instructions or live deployment.
+- Required video: less than 5 minutes, live terminal screencast, audio
+  narration, real evidence, at least one self-correction sequence, publicly
+  visible on YouTube, Vimeo, or Youku.
+- Required written materials: English or English translation.
+- Required artifacts: architecture diagram, dataset documentation, accuracy
+  report, and agent execution logs.
+
+Sources:
+
+- `https://findevil.devpost.com/`
+- `https://findevil.devpost.com/rules`
+
+## Project Name
+
+CaseProof Analyst
+
+## Tagline
+
+Fast first triage for SIFT evidence without accepting unsupported AI findings.
+
+## Short Description
+
+CaseProof Analyst is a read-only Custom MCP Server and bounded AI agent for
+FIND EVIL. It triages a Windows disk image through typed SIFT-compatible tools,
+checks candidate findings against evidence, drops unsupported claims, and emits
+an analyst report, evidence book, correction ledger, accuracy report, and
+execution log.
+
+## What It Does
+
+CaseProof Analyst gives an incident responder a defensible first pass over disk
+evidence. The agent cannot run arbitrary shell commands through the MCP server.
+Instead, it can call a small set of typed forensic tools:
+
+- open evidence read-only;
+- inspect volume or partition boundaries;
+- inventory filesystem paths;
+- build timeline outputs when the runtime supports it;
+- extract registry and event evidence through bounded wrappers;
+- verify claims;
+- write execution logs.
+
+The current real CASE-RD01 pass proves evidence integrity, NTFS volume access,
+high-signal Windows artifact discovery, bounded registry Run-key/service
+content parsing, replay consistency, and self-correction for an unsupported
+compromise claim. It does not claim full incident reconstruction.
+
+## How It Was Built
+
+The project is built in Python with the official `mcp` package and FastMCP. The
+server exposes eight public MCP tools with Pydantic schemas. The agent starts
+the server over stdio, uses hard iteration and timeout budgets, and routes model
+tool calls through the MCP boundary.
+
+The important design choice is that evidence safety is architectural. The model
+does not receive generic shell access. Generated reports, logs, and exports are
+written under a separate case workspace, while the original evidence path stays
+input-only.
+
+## What Makes It Different
+
+Most AI triage demos look good when the final report sounds confident. This
+project is optimized for the harder question: can a reviewer trace the claim
+back to evidence?
+
+Every confirmed finding must have an evidence reference. Unsupported claims are
+dropped, downgraded, corrected, or routed to human review. Parser failures and
+unknowns remain visible. The demo story is not "AI found everything"; it is "AI
+moved quickly, then stopped itself from making a claim it could not prove."
+
+## Real Validation
+
+The project was tested against the FIND EVIL starter evidence file
+`base-rd-01-cdrive.E01` from the SRL-2018 compromised enterprise dataset. The
+real bounded pass produced:
+
+- final analyst report;
+- evidence book;
+- correction ledger;
+- real-run accuracy report;
+- execution log review;
+- public-safe real execution-log excerpt;
+- judge summary;
+- artifact index;
+- JSONL execution log.
+
+Confirmed findings are limited to evidence integrity, volume accessibility,
+artifact-family availability, and bounded registry Run-key/service content. No
+malicious finding is claimed.
+
+## Challenges
+
+The main challenge was keeping the project honest. The evidence is large, local
+runtime behavior varies, and some tools produce text rather than clean JSON. The
+project therefore treats parser failures, missing tools, missing model keys, and
+unsupported claims as first-class states instead of hiding them.
+
+Another challenge was model runtime availability. OpenRouter is currently the
+working free/low-cost smoke-tested path. Groq is implemented but the local key
+returned HTTP 403 in live tests. Anthropic remains supported when a valid key is
+available.
+
+## What I Learned
+
+For DFIR, the trust boundary matters as much as the final prose. A useful AI
+responder has to preserve evidence, show its work, and know when to say
+"unknown." A narrow evidence-backed triage slice is more useful than a broad
+demo that silently upgrades assumptions into findings.
+
+## What Is Next
+
+Next work is deeper content-level analysis:
+
+- expand registry parsing beyond SOFTWARE Run keys and SYSTEM services;
+- parse event logs into event-level findings;
+- generate and summarize a bounded Plaso timeline;
+- run a longer autonomous model loop when provider limits allow it;
+- compare against official ground truth if it becomes available.
+
+## Required Component Mapping
+
+| Required component | Final submission value |
+|---|---|
+| Public code repository | Public GitHub URL after publication |
+| License | MIT, `LICENSE` |
+| README setup | `README.md` |
+| Local run instructions | README plus `docs/judge_try_it_out.md` |
+| Demo video | YouTube/Vimeo/Youku URL after recording |
+| Architecture diagram | `docs/architecture.md` |
+| Dataset documentation | `docs/dataset_documentation.md` |
+| Accuracy report | `docs/accuracy_report.md` |
+| Agent execution logs | `docs/public_real_execution_log_sample.jsonl`, `docs/public_real_traceability_packet.md`, plus local full run log under `cases/CASE-RD01/` |
+| Text description | This document |
+
+## Final Paste Checklist
+
+- Replace `PUBLIC_GITHUB_URL` with the verified GitHub repository URL.
+- Replace `DEMO_VIDEO_URL` with the public video URL.
+- Confirm the repository does not include `evidence/`, `cases/`, `.env.local`,
+  or local-only notes.
+- Confirm all submitted text is English.
+- Confirm the video shows the same behavior described here.

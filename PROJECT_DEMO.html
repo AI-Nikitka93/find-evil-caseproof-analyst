@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CaseProof Analyst Demo</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #17202a;
+      --muted: #5b6776;
+      --line: #d8dee7;
+      --paper: #f6f8fb;
+      --panel: #ffffff;
+      --blue: #175cd3;
+      --green: #177245;
+      --red: #a33a2a;
+      --amber: #9a6500;
+      --code: #eef3f8;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--ink);
+      background: var(--paper);
+      line-height: 1.5;
+    }
+
+    header {
+      background: #0f1720;
+      color: white;
+      padding: 34px 24px 26px;
+      border-bottom: 4px solid #3b82f6;
+    }
+
+    header .inner,
+    main {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(32px, 5vw, 56px);
+      letter-spacing: 0;
+      line-height: 1.02;
+    }
+
+    h2 {
+      margin: 0 0 16px;
+      font-size: 24px;
+    }
+
+    h3 {
+      margin: 0 0 8px;
+      font-size: 18px;
+    }
+
+    p { margin: 0 0 12px; }
+
+    .subtitle {
+      max-width: 820px;
+      color: #d9e2ef;
+      font-size: 18px;
+    }
+
+    .status-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 10px;
+      border: 1px solid rgba(255,255,255,.32);
+      border-radius: 6px;
+      color: white;
+      background: rgba(255,255,255,.08);
+      font-size: 14px;
+    }
+
+    main {
+      padding: 24px 0 48px;
+    }
+
+    section {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 22px;
+      margin: 16px 0;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .two {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .metric {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      background: #fbfcfe;
+      min-height: 120px;
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 30px;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .muted { color: var(--muted); }
+    .ok { color: var(--green); }
+    .warn { color: var(--amber); }
+    .stop { color: var(--red); }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+    }
+
+    .step {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 13px;
+      background: #fbfcfe;
+      min-height: 132px;
+    }
+
+    .step .num {
+      display: inline-block;
+      color: white;
+      background: var(--blue);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      margin-bottom: 10px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th, td {
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--line);
+      padding: 10px 8px;
+    }
+
+    th {
+      background: #f0f4f9;
+      font-weight: 700;
+    }
+
+    code, pre {
+      font-family: Consolas, "Courier New", monospace;
+      background: var(--code);
+      border-radius: 6px;
+    }
+
+    code { padding: 2px 5px; }
+
+    pre {
+      margin: 0;
+      padding: 14px;
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      white-space: pre-wrap;
+    }
+
+    .callout {
+      border-left: 5px solid var(--blue);
+      background: #eef5ff;
+      padding: 14px 16px;
+      border-radius: 6px;
+      margin-top: 10px;
+    }
+
+    .danger {
+      border-left-color: var(--red);
+      background: #fff2ef;
+    }
+
+    a {
+      color: var(--blue);
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    a:hover { text-decoration: underline; }
+
+    @media (max-width: 860px) {
+      .grid,
+      .two,
+      .flow {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="inner">
+      <h1>CaseProof Analyst</h1>
+      <p class="subtitle">A terminal-first DFIR agent for FIND EVIL: it opens real disk evidence read-only, runs typed SIFT-compatible tools, verifies claims, drops unsupported conclusions, and writes a traceable evidence package.</p>
+      <div class="status-row">
+        <span class="pill">Input: real E01 disk image</span>
+        <span class="pill">Runtime: WSL SIFT-compatible tools</span>
+        <span class="pill">Output: reports + evidence book + logs</span>
+        <span class="pill">UI: terminal and generated files</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section>
+      <h2>What this project is</h2>
+      <p>This is not a normal website. It is a forensic triage tool. The user gives it a disk image, and the project creates a defensible first-pass case package.</p>
+      <div class="callout">
+        <strong>Plain version:</strong> it checks a suspicious Windows disk image and refuses to say "compromised" unless the evidence actually supports that claim.
+      </div>
+    </section>
+
+    <section>
+      <h2>What it does in one run</h2>
+      <div class="flow">
+        <div class="step">
+          <span class="num">1</span>
+          <h3>Open evidence</h3>
+          <p>Registers <code>base-rd-01-cdrive.E01</code> as read-only input and verifies SHA256.</p>
+        </div>
+        <div class="step">
+          <span class="num">2</span>
+          <h3>Find volume</h3>
+          <p>Uses SIFT-compatible tools to identify an analyzable NTFS volume boundary.</p>
+        </div>
+        <div class="step">
+          <span class="num">3</span>
+          <h3>Inventory artifacts</h3>
+          <p>Finds registry hives, event logs, user hives, and McAfee event paths.</p>
+        </div>
+        <div class="step">
+          <span class="num">4</span>
+          <h3>Verify claims</h3>
+          <p>Confirmed findings need evidence references. Unsupported claims are not promoted.</p>
+        </div>
+        <div class="step">
+          <span class="num">5</span>
+          <h3>Write package</h3>
+          <p>Creates analyst report, evidence book, correction ledger, accuracy report, and execution log.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Latest judge-style run</h2>
+      <div class="grid">
+        <div class="metric">
+          <strong class="ok">3</strong>
+          <span>confirmed evidence-backed findings</span>
+        </div>
+        <div class="metric">
+          <strong class="ok">617</strong>
+          <span>high-signal filesystem records located</span>
+        </div>
+        <div class="metric">
+          <strong class="ok">true</strong>
+          <span>original evidence unchanged after run</span>
+        </div>
+        <div class="metric">
+          <strong>201</strong>
+          <span>registry hive/path records located</span>
+        </div>
+        <div class="metric">
+          <strong>3</strong>
+          <span>event log paths located</span>
+        </div>
+        <div class="metric">
+          <strong class="warn">0</strong>
+          <span>confirmed malicious findings claimed</span>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Confirmed findings</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Finding</th>
+            <th>Evidence path</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>F001</td>
+            <td>RD01 EWF evidence opened read-only and matched expected SHA256.</td>
+            <td><code>case_open_readonly:sha256</code></td>
+          </tr>
+          <tr>
+            <td>F002</td>
+            <td>RD01 is analyzable as an NTFS volume image at sector 0.</td>
+            <td><code>list_partitions</code> / <code>fsstat</code> fallback</td>
+          </tr>
+          <tr>
+            <td>F003</td>
+            <td>High-signal Windows artifact families are present for follow-on triage.</td>
+            <td><code>filesystem_inventory</code> and <code>high_signal_inventory.json</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>Self-correction moment</h2>
+      <p>The tool deliberately rejects this tempting claim:</p>
+      <pre>Original candidate: Confirmed compromise or persistence on RD01.
+Reason challenged: unsupported_claim
+Final status: dropped</pre>
+      <div class="callout danger">
+        This is the point of the project: it finds useful artifacts quickly, but it does not upgrade "artifact exists" into "machine is compromised" without content-level proof.
+      </div>
+    </section>
+
+    <section>
+      <h2>Where the visible output is</h2>
+      <div class="grid two">
+        <div>
+          <h3>Main report files</h3>
+          <p><a href="cases/CASE-RD01-JUDGE-20260507/reports/final_analyst_report.md">Final analyst report</a></p>
+          <p><a href="cases/CASE-RD01-JUDGE-20260507/reports/evidence_book.md">Evidence book</a></p>
+          <p><a href="cases/CASE-RD01-JUDGE-20260507/reports/correction_ledger.md">Correction ledger</a></p>
+          <p><a href="cases/CASE-RD01-JUDGE-20260507/reports/real_run_accuracy_report.md">Real-run accuracy report</a></p>
+        </div>
+        <div>
+          <h3>Submission docs</h3>
+          <p><a href="README.md">README</a></p>
+          <p><a href="docs/final_submission_package.md">Devpost-ready description</a></p>
+          <p><a href="docs/demo_video_script.md">Demo video script</a></p>
+          <p><a href="docs/judge_try_it_out.md">Judge try-it-out guide</a></p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Command that creates the result</h2>
+      <pre>py scripts\run_real_case.py --case-id CASE-RD01-DEMO --evidence-path evidence\base-rd-01-cdrive.E01 --case-workspace cases\CASE-RD01-DEMO --json</pre>
+      <p class="muted">This command is what you should record in the demo video. It creates a fresh case package from the real evidence.</p>
+    </section>
+
+    <section>
+      <h2>What it does not do yet</h2>
+      <ul>
+        <li>It does not claim full incident reconstruction.</li>
+        <li>It does not claim a confirmed malicious finding.</li>
+        <li>Registry, event, and timeline content-level parsing remain future work.</li>
+        <li>The project is terminal-first; this HTML page is only a visual explainer.</li>
+      </ul>
+    </section>
+  </main>
+</body>
+</html>
