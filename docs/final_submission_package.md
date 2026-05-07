@@ -54,8 +54,9 @@ Instead, it can call a small set of typed forensic tools:
 
 The current real CASE-RD01 pass proves evidence integrity, NTFS volume access,
 high-signal Windows artifact discovery, bounded registry Run-key/service
-content parsing, replay consistency, and self-correction for an unsupported
-compromise claim. It does not claim full incident reconstruction.
+content parsing, bounded EVTX event-content parsing, replay consistency, and
+self-correction for an unsupported compromise claim. It does not claim full
+incident reconstruction.
 
 ## How It Was Built
 
@@ -97,8 +98,8 @@ real bounded pass produced:
 - JSONL execution log.
 
 Confirmed findings are limited to evidence integrity, volume accessibility,
-artifact-family availability, and bounded registry Run-key/service content. No
-malicious finding is claimed.
+artifact-family availability, bounded registry Run-key/service content, and
+bounded EVTX event records. No malicious finding is claimed.
 
 ## Challenges
 
@@ -108,9 +109,9 @@ project therefore treats parser failures, missing tools, missing model keys, and
 unsupported claims as first-class states instead of hiding them.
 
 Another challenge was model runtime availability. OpenRouter is currently the
-working free/low-cost smoke-tested path. Groq is implemented but the local key
-returned HTTP 403 in live tests. Anthropic remains supported when a valid key is
-available.
+selected free/low-cost demo path in `auto` mode. Groq is implemented and now
+passes API readiness in this workspace, while Anthropic remains supported when a
+valid key is available.
 
 ## What I Learned
 
@@ -124,7 +125,7 @@ demo that silently upgrades assumptions into findings.
 Next work is deeper content-level analysis:
 
 - expand registry parsing beyond SOFTWARE Run keys and SYSTEM services;
-- parse event logs into event-level findings;
+- correlate parsed event records with registry and timeline anchors;
 - generate and summarize a bounded Plaso timeline;
 - run a longer autonomous model loop when provider limits allow it;
 - compare against official ground truth if it becomes available.
@@ -152,3 +153,10 @@ Next work is deeper content-level analysis:
   or local-only notes.
 - Confirm all submitted text is English.
 - Confirm the video shows the same behavior described here.
+- Run the final 100-point gate after the video and Devpost page exist:
+
+```powershell
+py scripts\final_submission_audit.py --demo-video-url VIDEO_URL --devpost-url DEVPOST_URL --strict
+```
+
+Expected final state: `ready (100/100)`.

@@ -10,10 +10,9 @@ implemented, smoke-tested, and candidate provider paths.
 Use this wording:
 
 - implemented runtime: Anthropic, OpenRouter, and Groq through `src/agent.py`;
-- smoke-tested runtime: OpenRouter, verified with a short real-evidence agent
-  run on 2026-05-06;
-- degraded implemented runtime: Groq, implemented but locally returning HTTP
-  403 during live smoke testing;
+- selected demo runtime: OpenRouter, verified with a short real-evidence agent
+  run and selected by `--check-api` on 2026-05-07;
+- alternate implemented runtime: Groq, currently passing API readiness;
 - candidate provider: a configured external provider that is not used by the
   current autonomous agent until an adapter is built and tested;
 - future adapter: a possible runtime path that is outside current release
@@ -24,7 +23,7 @@ Use this wording:
 Avoid this wording:
 
 - "all providers are equally ready";
-- "Groq is locally usable" until the HTTP 403 condition is resolved;
+- a specific provider is used in the final demo unless the recorded run proves it;
 - "any configured key can run the current agent";
 - "provider fallback works" unless an actual fallback adapter and test exist.
 
@@ -34,7 +33,7 @@ Avoid this wording:
 |---|---|
 | `README.md` | Setup names OpenRouter as the preferred free/low-cost path and preserves Groq/Anthropic caveats. |
 | `docs/STATE.md` | Current state keeps final submission blocked while noting OpenRouter smoke success. |
-| `docs/freshness_dependency_register_2026-05-06.md` | Provider limits and Groq HTTP 403 are treated as volatile. |
+| `docs/freshness_dependency_register_2026-05-06.md` | Provider limits are treated as volatile and must be refreshed before final submission. |
 | `docs/local_vs_sift_readiness_report.md` | Local checks are separated from real SIFT readiness. |
 | `docs/submission_readiness_audit.md` | Submission remains blocked by real validation and public submission materials. |
 | `src/agent.py` | `build_api_readiness_report()` selects the first ready implemented provider without printing secrets. |
@@ -46,11 +45,11 @@ The release can claim:
 
 - the current implemented runtimes can be checked without printing secrets;
 - OpenRouter has passed a short local smoke run;
-- Groq adapter code exists but local account/API status currently blocks live use.
+- Groq adapter code exists and currently passes API readiness.
 
 The release cannot claim:
 
-- stable Groq execution from the current local key;
+- stable execution from a specific provider without a fresh recorded run;
 - Gemini/OpenAI execution;
 - model-provider independence;
 - real SIFT validation from API readiness alone.

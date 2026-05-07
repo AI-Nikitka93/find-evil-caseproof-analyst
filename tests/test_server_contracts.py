@@ -180,6 +180,145 @@ def test_missing_sift_binary_raises_tool_error(monkeypatch: pytest.MonkeyPatch, 
         )
 
 
+def test_plaso_timeline_command_uses_positional_storage_file(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    evidence = tmp_path / "disk.E01"
+    evidence.write_bytes(b"evidence")
+    workspace = tmp_path / "case"
+    opened = server.case_open_readonly(
+        server.CaseOpenReadonlyInput(
+            case_id="case1",
+            evidence_path=str(evidence),
+            case_workspace=str(workspace),
+        )
+    )
+    calls: list[tuple[str, list[str]]] = []
+
+    def fake_run_command(tool_name: str, args: list[str], **kwargs: object) -> object:
+        calls.append((tool_name, args))
+        if tool_name == "psort.py":
+            jsonl_file = Path(args[args.index("-w") + 1])
+            jsonl_file.parent.mkdir(parents=True, exist_ok=True)
+            jsonl_file.write_text("", encoding="utf-8")
+        return object()
+
+    monkeypatch.setattr(server, "_run_command", fake_run_command)
+
+    server.build_timeline(
+        server.BuildTimelineInput(
+            evidence_id=opened.evidence_id,
+            source_path=str(evidence),
+            max_records=1,
+        )
+    )
+
+    log2timeline_args = calls[0][1]
+    assert calls[0][0] == "log2timeline.py"
+    assert "--storage-file" not in log2timeline_args
+    assert log2timeline_args[-2].endswith(".plaso")
+    assert log2timeline_args[-1] == str(evidence.resolve())
+
+
+def test_event_record_command_uses_positional_storage_file(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    evidence = tmp_path / "disk.E01"
+    evidence.write_bytes(b"evidence")
+    workspace = tmp_path / "case"
+    event_log = workspace / "exports" / "Security.evtx"
+    event_log.parent.mkdir(parents=True)
+    event_log.write_bytes(b"evtx")
+    opened = server.case_open_readonly(
+        server.CaseOpenReadonlyInput(
+            case_id="case1",
+            evidence_path=str(evidence),
+            case_workspace=str(workspace),
+        )
+    )
+    calls: list[tuple[str, list[str]]] = []
+
+    def fake_run_command(tool_name: str, args: list[str], **kwargs: object) -> object:
+        calls.append((tool_name, args))
+        if tool_name == "psort.py":
+            jsonl_file = Path(args[args.index("-w") + 1])
+            jsonl_file.parent.mkdir(parents=True, exist_ok=True)
+            jsonl_file.write_text("", encoding="utf-8")
+        return object()
+
+    monkeypatch.setattr(server, "_run_command", fake_run_command)
+
+    server.extract_event_records(
+        server.ExtractEventRecordsInput(
+            evidence_id=opened.evidence_id,
+            event_log_paths=[str(event_log)],
+            max_records=1,
+        )
+    )
+
+    log2timeline_args = calls[0][1]
+    assert calls[0][0] == "log2timeline.py"
+    assert "--storage-file" not in log2timeline_args
+    assert log2timeline_args[-2].endswith(".plaso")
+    assert log2timeline_args[-1] == str(event_log.resolve())
+
+
+def test_event_records_fallback_to_python_evtx_when_plaso_is_degraded(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    evidence = tmp_path / "disk.E01"
+    evidence.write_bytes(b"evidence")
+    workspace = tmp_path / "case"
+    event_log = workspace / "exports" / "System.evtx"
+    event_log.parent.mkdir(parents=True)
+    event_log.write_bytes(b"evtx")
+    opened = server.case_open_readonly(
+        server.CaseOpenReadonlyInput(
+            case_id="case1",
+            evidence_path=str(evidence),
+            case_workspace=str(workspace),
+        )
+    )
+
+    def fake_run_command(tool_name: str, args: list[str], **kwargs: object) -> object:
+        raise server.ToolError("Missing required artifact definition: MacOSLocalTime")
+
+    def fake_python_evtx_reader(
+        path: Path,
+        *,
+        evidence_id: str,
+        max_records: int,
+        event_ids: set[int],
+    ) -> tuple[list[server.EventRecord], bool]:
+        assert path == event_log.resolve()
+        assert evidence_id == opened.evidence_id
+        assert max_records == 5
+        assert event_ids == {7045}
+        return (
+            [
+                server.EventRecord(
+                    record_id=f"{opened.evidence_id}:event:System.evtx:1",
+                    event_id=7045,
+                    channel="system",
+                    source_path=str(path),
+                    provider="Service Control Manager",
+                    rendered_message="A service was installed in the system.",
+                )
+            ],
+            False,
+        )
+
+    monkeypatch.setattr(server, "_run_command", fake_run_command)
+    monkeypatch.setattr(server, "_read_evtx_records_with_python_evtx", fake_python_evtx_reader)
+
+    output = server.extract_event_records(
+        server.ExtractEventRecordsInput(
+            evidence_id=opened.evidence_id,
+            event_log_paths=[str(event_log)],
+            event_ids=[7045],
+            max_records=5,
+        )
+    )
+
+    assert output.parser_status == "ok"
+    assert output.command_plan.tool == "python-evtx"
+    assert output.records[0].event_id == 7045
+
+
 def test_write_execution_log_appends_jsonl_inside_registered_workspace(tmp_path: Path) -> None:
     evidence = tmp_path / "disk.E01"
     evidence.write_bytes(b"evidence")

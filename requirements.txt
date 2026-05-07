@@ -1,3 +1,4 @@
 mcp[cli]>=1.27,<2
 pydantic>=2.11,<3
 anthropic>=0.75,<1
+python-evtx>=0.8,<1

@@ -110,9 +110,35 @@ Expected result:
 
 - artifact families are confirmed as present;
 - no malicious finding is inferred from presence alone;
-- bounded registry Run-key/service content is parsed, but event-log content,
-  full timeline, and deeper registry correlation remain open until parsed into
-  content-level evidence.
+- bounded registry Run-key/service content and bounded EVTX event content are
+  parsed, but full timeline and deeper registry/event correlation remain open
+  until parsed into content-level evidence.
+
+## Finding F005 Chain
+
+Final finding:
+
+- `F005`: Windows EVTX records were extracted from the real image and parsed
+  into bounded event content records.
+
+Trace chain:
+
+| Layer | What to inspect |
+|---|---|
+| Final report | `cases/CASE-RD01/reports/final_analyst_report.md`, finding `F005` |
+| Evidence book | `cases/CASE-RD01/reports/evidence_book.md`, `F005` entry |
+| Source action | `extract_event_records` after `icat` extraction of EVTX files |
+| Export | `cases/CASE-RD01/exports/event_content_summary.json` |
+| Accuracy note | `docs/accuracy_report.md`, `RD01-EVT-001` row |
+| Execution log | `cases/CASE-RD01/logs/agent_execution.jsonl`, `tool_name=extract_event_records` |
+| Public excerpt | `docs/public_real_execution_log_sample.jsonl`, `tool_name=extract_event_records` |
+
+Expected result:
+
+- event records are confirmed as parsed content, not only as paths;
+- the local Plaso dependency issue is made survivable by the `python-evtx`
+  fallback;
+- no compromise finding is inferred from event presence alone.
 
 ## Self-Correction Chain
 

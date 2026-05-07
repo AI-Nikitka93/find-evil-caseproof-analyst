@@ -110,7 +110,8 @@ Point out:
 
 - rejected unsupported claim;
 - zero confirmed compromise findings;
-- unknown event/timeline content and deeper registry correlation remain visible.
+- bounded event content is parsed, while full timeline and deeper
+  registry/event correlation remain visible as limitations.
 
 ### 2:30-3:20 Evidence Chain
 

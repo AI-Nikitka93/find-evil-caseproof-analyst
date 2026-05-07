@@ -28,11 +28,53 @@ TOOL_TIMEOUT_SECONDS = 300
 TOOL_CALL_BUDGET = 60
 TOKEN_BUDGET = 120_000
 MAX_OUTPUT_TOKENS = 4000
+MAX_TOOL_RESULT_LIST_ITEMS = 25
+MAX_TOOL_RESULT_STRING_CHARS = 2000
 DEFAULT_MODEL = "claude-sonnet-4-5-20250929"
 DEFAULT_MCP_SERVER_COMMAND = "python"
 LOCAL_ENV_FILE = ".env.local"
 DEFAULT_AGENT_PROVIDER = "auto"
 OPENAI_COMPATIBLE_TIMEOUT_SECONDS = 120
+TOOL_INPUT_FIELDS: dict[str, set[str]] = {
+    "case_open_readonly": {"case_id", "evidence_path", "case_workspace", "expected_sha256"},
+    "list_partitions": {"evidence_id", "image_path", "include_unallocated", "sector_size"},
+    "filesystem_inventory": {
+        "evidence_id",
+        "image_path",
+        "partition_start_sector",
+        "root_inode",
+        "recursive",
+        "include_deleted",
+        "path_filters",
+        "max_entries",
+    },
+    "build_timeline": {
+        "evidence_id",
+        "source_path",
+        "mode",
+        "parser_preset",
+        "timezone",
+        "start_utc",
+        "end_utc",
+        "max_records",
+    },
+    "extract_registry_persistence": {"evidence_id", "hive_paths", "plugin_scope", "output_mode", "max_records"},
+    "extract_event_records": {"evidence_id", "event_log_paths", "channels", "event_ids", "start_utc", "end_utc", "max_records"},
+    "verify_claim": {"evidence_id", "claim_id", "claim_text", "required_evidence_refs"},
+    "write_execution_log": {
+        "run_id",
+        "case_id",
+        "step_number",
+        "agent_intent",
+        "tool_name",
+        "arguments",
+        "parser_status",
+        "evidence_id",
+        "output_reference",
+        "token_usage",
+        "correction_reason",
+    },
+}
 API_PROVIDER_ENV = {
     "anthropic": {
         "env_var": "ANTHROPIC_API_KEY",
@@ -161,6 +203,45 @@ def _result_to_payload(result: Any) -> dict[str, Any]:
     if isinstance(result, dict):
         return result
     return {"result": str(result)}
+
+
+def _compact_value_for_model(value: Any) -> tuple[Any, bool]:
+    if isinstance(value, str):
+        if len(value) <= MAX_TOOL_RESULT_STRING_CHARS:
+            return value, False
+        return value[:MAX_TOOL_RESULT_STRING_CHARS] + "... [truncated for model context]", True
+    if isinstance(value, list):
+        compacted_items: list[Any] = []
+        truncated = len(value) > MAX_TOOL_RESULT_LIST_ITEMS
+        for item in value[:MAX_TOOL_RESULT_LIST_ITEMS]:
+            compacted_item, item_truncated = _compact_value_for_model(item)
+            compacted_items.append(compacted_item)
+            truncated = truncated or item_truncated
+        return compacted_items, truncated
+    if isinstance(value, dict):
+        compacted: dict[str, Any] = {}
+        truncated = False
+        for key, item in value.items():
+            compacted_item, item_truncated = _compact_value_for_model(item)
+            compacted[str(key)] = compacted_item
+            truncated = truncated or item_truncated
+            if isinstance(item, list) and len(item) > MAX_TOOL_RESULT_LIST_ITEMS:
+                compacted[f"{key}_original_count"] = len(item)
+        return compacted, truncated
+    return value, False
+
+
+def _compact_tool_payload_for_model(payload: dict[str, Any]) -> dict[str, Any]:
+    compacted, truncated = _compact_value_for_model(payload)
+    if not isinstance(compacted, dict):
+        return {"result": compacted, "model_context_truncated": truncated}
+    if truncated:
+        compacted["model_context_truncated"] = True
+        compacted["model_context_note"] = (
+            "Large tool output was compacted before returning to the model. "
+            "Use exported files, execution logs, or targeted follow-up calls for full records."
+        )
+    return compacted
 
 
 def _extract_text(content_blocks: list[Any]) -> str:
@@ -339,16 +420,36 @@ def _repair_tool_input_from_task_state(tool_name: str, tool_input: dict[str, Any
         repaired.setdefault("case_workspace", task_state.case_workspace)
         return repaired
 
+    if tool_name == "write_execution_log":
+        repaired.setdefault("run_id", task_state.run_id)
+        repaired.setdefault("case_id", task_state.case_id)
+        repaired.setdefault("step_number", 1)
+        repaired.setdefault("agent_intent", "Record agent progress.")
+        repaired.setdefault("tool_name", "agent_note")
+        repaired.setdefault("parser_status", "ok")
+        if task_state.evidence_id:
+            repaired.setdefault("evidence_id", task_state.evidence_id)
+        return repaired
+
     if task_state.evidence_id:
         repaired.setdefault("evidence_id", task_state.evidence_id)
     if tool_name in {
         "list_partitions",
         "filesystem_inventory",
-        "build_timeline",
         "extract_registry_persistence",
         "extract_event_records",
     }:
         repaired.setdefault("image_path", task_state.evidence_path)
+    if tool_name == "filesystem_inventory":
+        repaired.setdefault("partition_start_sector", 0)
+        if "recursive" not in repaired and "path_filters" not in repaired:
+            repaired["recursive"] = False
+            repaired.setdefault("max_entries", 250)
+    if tool_name == "build_timeline":
+        repaired.setdefault("source_path", repaired.get("image_path") or task_state.evidence_path)
+    allowed_fields = TOOL_INPUT_FIELDS.get(tool_name)
+    if allowed_fields is not None:
+        repaired = {key: value for key, value in repaired.items() if key in allowed_fields}
     return repaired
 
 
@@ -610,8 +711,24 @@ async def _call_mcp_tool(
     orchestration: OrchestrationState,
     *,
     tool_use: Any,
+    valid_tool_names: set[str] | None = None,
 ) -> dict[str, Any]:
     tool_name = tool_use.name
+    if valid_tool_names is not None and tool_name not in valid_tool_names:
+        error_text = f"Unknown MCP tool requested by model: {tool_name}"
+        task_state.local_events.append(
+            {
+                "event": "unknown_tool_rejected",
+                "tool_name": tool_name,
+                "error": error_text,
+            }
+        )
+        return {
+            "type": "tool_result",
+            "tool_use_id": tool_use.id,
+            "content": error_text,
+            "is_error": True,
+        }
     raw_tool_input = tool_use.input or {}
     tool_input = raw_tool_input.get("request", raw_tool_input) if isinstance(raw_tool_input, dict) else raw_tool_input
     tool_input = _repair_tool_input_from_task_state(tool_name, tool_input, task_state)
@@ -647,7 +764,7 @@ async def _call_mcp_tool(
         return {
             "type": "tool_result",
             "tool_use_id": tool_use.id,
-            "content": json.dumps(payload, ensure_ascii=True, default=_json_default),
+            "content": json.dumps(_compact_tool_payload_for_model(payload), ensure_ascii=True, default=_json_default),
             "is_error": is_error,
         }
     except Exception as exc:
@@ -678,16 +795,13 @@ async def _create_final_report_without_tools(
     client: AsyncAnthropic | None,
     messages: list[dict[str, Any]],
     task_state: TaskState,
+    orchestration: OrchestrationState,
 ) -> str:
     final_messages = [
         *messages,
         {
             "role": "user",
-            "content": (
-                "Hard execution limit reached. Produce the final report now using only "
-                "verified or explicitly labeled evidence already present in context. "
-                "Do not call tools."
-            ),
+            "content": _build_final_report_limit_message(orchestration),
         },
     ]
     if runtime.provider == "anthropic":
@@ -710,6 +824,17 @@ async def _create_final_report_without_tools(
     if not text or not _looks_like_final_report(text):
         text = _fallback_final_report(task_state)
     return text
+
+
+def _build_final_report_limit_message(orchestration: OrchestrationState) -> str:
+    return (
+        "max_iterations reached. Produce the final report now using only verified "
+        "or explicitly labeled evidence already present in context. Do not call tools. "
+        f"Iterations used: {orchestration.iteration}/{orchestration.max_iterations}. "
+        f"Tool calls used: {orchestration.tool_calls}/{orchestration.tool_call_budget}. "
+        "Do not claim the tool-call budget was exhausted unless tool calls used is greater than or equal to the tool-call budget. "
+        "If no claims were verified, say that no findings are confirmed."
+    )
 
 
 async def run_agent(
@@ -753,6 +878,7 @@ async def run_agent(
             await session.initialize()
             mcp_tools = await session.list_tools()
             tools = _anthropic_tools_from_mcp(mcp_tools) if runtime.provider == "anthropic" else _openai_tools_from_mcp(mcp_tools)
+            valid_tool_names = {str(tool.name) for tool in getattr(mcp_tools, "tools", [])}
 
             async with asyncio.timeout(orchestration.global_timeout_seconds):
                 iteration = 0
@@ -803,6 +929,7 @@ async def run_agent(
                             task_state,
                             orchestration,
                             tool_use=tool_use,
+                            valid_tool_names=valid_tool_names,
                         )
                         tool_results.append(tool_result)
                     messages.append({"role": "user", "content": tool_results})
@@ -813,6 +940,7 @@ async def run_agent(
                 client=client,
                 messages=messages,
                 task_state=task_state,
+                orchestration=orchestration,
             )
             report_path.parent.mkdir(parents=True, exist_ok=True)
             report_path.write_text(_normalize_report_markdown(final_report), encoding="utf-8")

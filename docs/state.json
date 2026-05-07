@@ -1,6 +1,6 @@
 {
   "current_goal": "Build a read-only Custom MCP Server for Windows disk triage.",
-  "current_task": "Final local submission package prepared with public-safe real execution trace, bounded registry content proof, and verified public GitHub repository; remaining blockers are demo video and Devpost gates.",
+  "current_task": "Final local submission package prepared with public-safe real execution trace, bounded registry/event content proof, and verified public GitHub repository; remaining blockers are demo video and Devpost gates.",
   "status": "PUBLIC_REPO_READY_EXTERNAL_SUBMISSION_BLOCKED",
   "active_step": "Record/upload demo video, paste Devpost text, and verify final public links.",
   "next_step": "Create verified public demo video URL, then run final public link audit before Devpost submission.",
@@ -8,8 +8,7 @@
     "demo video is not recorded or uploaded",
     "public video visibility is not verified",
     "Devpost form is not submitted",
-    "event-log content, full timeline, and deeper registry correlation remain open as accepted limitations",
-    "local Groq key returns HTTP 403 during live smoke testing"
+    "full timeline and deeper registry/event correlation remain open as accepted limitations"
   ],
   "artifacts": [
     "README.md",
@@ -65,6 +64,7 @@
     "cases/CASE-RD01/reports/evidence_book.md",
     "cases/CASE-RD01/reports/correction_ledger.md",
     "cases/CASE-RD01/reports/real_run_accuracy_report.md",
+    "cases/CASE-RD01/exports/event_content_summary.json",
     "cases/CASE-RD01/logs/agent_execution.jsonl"
   ],
   "updated_at": "2026-05-07"

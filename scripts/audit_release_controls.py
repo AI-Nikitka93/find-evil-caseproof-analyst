@@ -56,6 +56,7 @@ REQUIRED_DOCS = (
     "docs/public_real_execution_log_sample.jsonl",
     "docs/public_real_traceability_packet.md",
     "docs/final_release_go_no_go_2026-05-07.md",
+    "docs/autonomous_smoke_hardening_2026-05-07.md",
 )
 REQUIRED_SCHEMA_MARKERS = (
     "CaseOpenReadonlyInput",
@@ -120,6 +121,15 @@ def build_release_controls_report(root: Path = PROJECT_ROOT) -> dict[str, Any]:
             name="boundary_docs_exist",
             ok=not missing_docs,
             detail="missing: " + ", ".join(missing_docs) if missing_docs else "all release-control docs exist",
+        )
+    )
+
+    final_audit_path = root / "scripts" / "final_submission_audit.py"
+    checks.append(
+        AuditCheck(
+            name="final_submission_audit_exists",
+            ok=final_audit_path.is_file(),
+            detail="final submission audit script exists" if final_audit_path.is_file() else "missing scripts/final_submission_audit.py",
         )
     )
 

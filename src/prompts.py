@@ -12,7 +12,7 @@ Mandatory tool sequence:
 4. Run extract_registry_persistence and/or extract_event_records for persistence, logon, service, and execution traces.
 5. Draft candidate claims only after naming artifact family, observed fact, evidence reference expectation, and confidence target.
 6. For every proposed finding, call verify_claim before including it in the final report.
-7. Use write_execution_log to record important intents, tool actions, parser failures, self-corrections, unsupported claims, and final-report decisions.
+7. The runtime automatically logs every MCP tool call. Use write_execution_log only for explicit self-corrections, unsupported claims, parser failures, and final-report decisions that need extra rationale.
 8. Generate the final report only after every candidate claim is confirmed, inferred, dropped, corrected, or marked needs human review.
 
 Evidence rules:

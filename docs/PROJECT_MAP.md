@@ -184,7 +184,7 @@ Still open:
 - Demo video recording, public upload, and visibility verification.
 - Devpost form submission with public links.
 - Full long-run autonomous investigation beyond the short OpenRouter smoke run.
-- Event-log content, full timeline, and deeper registry correlation beyond the
+- Full timeline and deeper registry/event correlation beyond the
   bounded pass. SOFTWARE Run-key and SYSTEM service parsing are now covered by
   the current CASE-RD01 run.
 

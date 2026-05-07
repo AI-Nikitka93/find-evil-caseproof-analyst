@@ -28,6 +28,11 @@ from src.real_validation import snapshot_evidence, validate_original_evidence_un
 
 
 DEFAULT_SHA256 = "12A622AA073DBBDA3A4983014328A6085C8247CE93FE47FD6BA7483ED9D19AAB"
+TARGET_EVENT_LOGS = (
+    "Windows/System32/winevt/Logs/Security.evtx",
+    "Windows/System32/winevt/Logs/System.evtx",
+    "Windows/System32/winevt/Logs/Application.evtx",
+)
 
 
 def _sha256(path: Path) -> str:
@@ -114,10 +119,38 @@ def _extract_artifact_from_image(
     return output_path
 
 
+def _extract_named_artifacts_from_image(
+    *,
+    records: list[server.FileMetadataRecord],
+    wanted_paths: tuple[str, ...],
+    evidence_path: Path,
+    partition_start_sector: int,
+    exports_dir: Path,
+) -> dict[str, Path]:
+    extracted: dict[str, Path] = {}
+    for wanted_path in wanted_paths:
+        record = _find_exact_record(records, wanted_path)
+        if record is None:
+            continue
+        extracted[wanted_path] = _extract_artifact_from_image(
+            record=record,
+            evidence_path=evidence_path,
+            partition_start_sector=partition_start_sector,
+            exports_dir=exports_dir,
+        )
+    return extracted
+
+
 def _registry_record_ref(record: server.RegistryPersistenceRecord) -> str:
     evidence_ref = record.evidence_refs[0].record_id if record.evidence_refs else record.record_id
     value_name = f" value={record.value_name}" if record.value_name else ""
     return f"{evidence_ref} registry_path={record.registry_path}{value_name}"
+
+
+def _event_record_ref(record: server.EventRecord) -> str:
+    timestamp = f" timestamp={record.timestamp_utc.isoformat()}" if record.timestamp_utc else ""
+    provider = f" provider={record.provider}" if record.provider else ""
+    return f"{record.record_id} channel={record.channel} event_id={record.event_id}{provider}{timestamp}"
 
 
 def run_case(*, case_id: str, evidence_path: Path, case_workspace: Path, expected_sha256: str) -> dict[str, Any]:
@@ -308,6 +341,54 @@ def run_case(*, case_id: str, evidence_path: Path, case_workspace: Path, expecte
         output_reference="exports/registry_content_summary.json",
     )
 
+    extracted_event_logs = _extract_named_artifacts_from_image(
+        records=signal_inventory.records,
+        wanted_paths=TARGET_EVENT_LOGS,
+        evidence_path=evidence_path,
+        partition_start_sector=start_sector,
+        exports_dir=exports,
+    )
+    if extracted_event_logs:
+        event_content = server.extract_event_records(
+            server.ExtractEventRecordsInput(
+                evidence_id=opened.evidence_id,
+                event_log_paths=[str(path) for path in extracted_event_logs.values()],
+                max_records=120,
+            )
+        )
+        event_parser_status = event_content.parser_status
+        event_parse_note = None
+    else:
+        event_content = server.ExtractEventRecordsOutput(
+            evidence_id=opened.evidence_id,
+            parser_status="failed",
+            records=[],
+            truncated=False,
+            command_plan=server.CommandPlan(
+                tool="extract_event_records",
+                arguments=[],
+                parser="not_started",
+                expected_output="Windows event records",
+            ),
+        )
+        event_parser_status = "failed"
+        event_parse_note = "No target event logs were available for content extraction."
+    _log(
+        run_id=run_id,
+        case_id=case_id,
+        evidence_id=opened.evidence_id,
+        step_number=8,
+        tool_name="extract_event_records",
+        arguments={
+            "event_log_paths": [path.name for path in extracted_event_logs.values()],
+            "max_records": 120,
+        },
+        parser_status=event_parser_status,
+        intent="Parse bounded Windows event-log content from extracted EVTX files instead of stopping at path presence.",
+        output_reference="exports/event_content_summary.json",
+        correction_reason=event_parse_note,
+    )
+
     registry_content_records = [*run_key_content.records, *service_content.records]
     registry_content_summary = {
         "software_hive_source_record": software_record.record_id,
@@ -318,9 +399,19 @@ def run_case(*, case_id: str, evidence_path: Path, case_workspace: Path, expecte
         "parser_status": "partial" if (run_key_content.truncated or service_content.truncated) else "ok",
         "malicious_classification": "not_claimed",
     }
+    event_content_summary = {
+        "extracted_event_logs": {source: str(path) for source, path in extracted_event_logs.items()},
+        "event_records": [record.model_dump(mode="json") for record in event_content.records],
+        "record_count": len(event_content.records),
+        "command_plan": event_content.command_plan.model_dump(mode="json"),
+        "parser_status": event_parser_status,
+        "truncated": event_content.truncated,
+        "malicious_classification": "not_claimed",
+    }
     _write_json(exports / "root_inventory.json", [record.model_dump(mode="json") for record in root_inventory.records])
     _write_json(exports / "high_signal_inventory.json", [record.model_dump(mode="json") for record in signal_inventory.records])
     _write_json(exports / "registry_content_summary.json", registry_content_summary)
+    _write_json(exports / "event_content_summary.json", event_content_summary)
     _write_json(exports / "preflight_report.json", preflight)
 
     replay_text = "\n".join(
@@ -371,6 +462,17 @@ def run_case(*, case_id: str, evidence_path: Path, case_workspace: Path, expecte
             confidence="confirmed",
         ),
     ]
+    if event_content.records:
+        findings.append(
+            Finding(
+                finding_id="F005",
+                title="Windows EVTX records were extracted from the real image and parsed into bounded event content records; no malicious classification is asserted.",
+                status="confirmed",
+                evidence_refs=[_event_record_ref(record) for record in event_content.records[:6]],
+                tool_trace=["icat", "extract_event_records"],
+                confidence="confirmed",
+            )
+        )
 
     evidence_book = [
         EvidenceBookEntry(
@@ -410,21 +512,33 @@ def run_case(*, case_id: str, evidence_path: Path, case_workspace: Path, expecte
             review_notes=f"run_key_records={len(run_key_content.records)}, service_records={len(service_content.records)}, malicious_classification=not_claimed",
         ),
     ]
+    if event_content.records:
+        evidence_book.append(
+            EvidenceBookEntry(
+                finding_id="F005",
+                evidence_ref=findings[4].evidence_refs[0],
+                source_reference="exports/event_content_summary.json",
+                artifact_family="Event content",
+                extraction_action=f"icat EVTX extraction followed by {event_content.command_plan.parser} via {event_content.command_plan.tool}",
+                parser_status=event_parser_status,
+                review_notes=f"event_records={len(event_content.records)}, truncated={str(event_content.truncated).lower()}, malicious_classification=not_claimed",
+            )
+        )
 
     correction_entries = [
         CorrectionLedgerEntry(
             original_candidate="Confirmed compromise or persistence on RD01.",
             reason_challenged="unsupported_claim",
-            follow_up_action="Ran bounded registry content extraction for SOFTWARE Run keys and SYSTEM services, then kept the compromise claim dropped because event, timeline, and deeper registry correlation were not parsed into compromise-level evidence.",
+            follow_up_action="Ran bounded registry content extraction for SOFTWARE Run keys, SYSTEM services, and EVTX content, then kept the compromise claim dropped because timeline and deeper cross-artifact correlation were not parsed into compromise-level evidence.",
             final_status="dropped",
-            evidence_references=tuple([*findings[2].evidence_refs[:2], *findings[3].evidence_refs[:2]]),
+            evidence_references=tuple([*findings[2].evidence_refs[:2], *findings[3].evidence_refs[:2], *(findings[4].evidence_refs[:2] if len(findings) > 4 else [])]),
         )
     ]
     _log(
         run_id=run_id,
         case_id=case_id,
         evidence_id=opened.evidence_id,
-        step_number=8,
+        step_number=9,
         tool_name="verify_claim",
         arguments={"claim": "Confirmed compromise or persistence on RD01", "required_confidence": "confirmed"},
         parser_status="ok",
@@ -436,13 +550,13 @@ def run_case(*, case_id: str, evidence_path: Path, case_workspace: Path, expecte
     accuracy = AccuracySummary(
         dataset="CASE-RD01 / base-rd-01-cdrive.E01 real local evidence",
         methodology="Real evidence was opened read-only, WSL forensic tools were used through the MCP backend, root inventory was replayed for consistency, and the reviewer-derived manifest was updated only with evidence-backed outcomes.",
-        findings_accuracy="Confirmed evidence and artifact findings: 4, including bounded registry content parsing for SOFTWARE Run keys and SYSTEM services. Confirmed compromise findings: 0. Official answer key: unavailable locally. Reviewer-derived manifest outcomes: partition/filesystem boundary answered, filesystem high-signal paths answered, bounded registry content partly answered, timeline/event content remain unknown.",
+        findings_accuracy=f"Confirmed evidence and artifact findings: {len(findings)}, including bounded registry content parsing for SOFTWARE Run keys and SYSTEM services plus bounded EVTX content parsing when records are present. Confirmed compromise findings: 0. Official answer key: unavailable locally. Reviewer-derived manifest outcomes: partition/filesystem boundary answered, filesystem high-signal paths answered, bounded registry content partly answered, event content partly answered, full timeline remains unknown.",
         false_positives=[],
-        missed_artifacts=["Timeline content not parsed in this bounded run.", "Registry analysis is limited to SOFTWARE Run keys and SYSTEM services.", "Event record content not parsed in this bounded run."],
+        missed_artifacts=["Full timeline content not parsed in this bounded run.", "Registry analysis is limited to SOFTWARE Run keys and SYSTEM services.", "Event analysis is bounded to extracted EVTX records and is not cross-correlated into a compromise narrative."],
         hallucination_controls=["Unsupported compromise/persistence claim was dropped.", "No confirmed malicious finding is reported without evidence references.", "Synthetic fixture metrics are not reused as real accuracy."],
         evidence_integrity="Original evidence remained read-only; snapshot comparison after the run did not detect size, mtime, or SHA256 change.",
         limits=["WSL toolchain is SIFT-compatible but not the official SANS SIFT OVA.", "This run proves real evidence access and bounded artifact discovery, not full incident reconstruction.", "No official answer key was available in local materials."],
-        untested_families=["Full Plaso timeline", "Registry plugins beyond Run keys and services", "Event log content parsing"],
+        untested_families=["Full Plaso timeline", "Registry plugins beyond Run keys and services", "Cross-artifact event/timeline/registry correlation"],
         rejected_unsupported_claims=["Confirmed compromise or persistence on RD01"],
         baseline_comparison="No fair external baseline run was performed; baseline comparison remains future scope.",
     )
@@ -457,13 +571,14 @@ def run_case(*, case_id: str, evidence_path: Path, case_workspace: Path, expecte
             "Partition/volume detection",
             "Root and high-signal filesystem inventory",
             "Bounded SOFTWARE Run key and SYSTEM service registry parsing",
+            "Bounded EVTX event content parsing",
             "Replay consistency for root inventory sample",
         ],
         confirmed_findings=findings,
         inferred_findings=[],
         rejected_claims=["Confirmed compromise or persistence on RD01"],
         limitations=accuracy.limits,
-        next_actions=["Expand registry parsing beyond Run keys and services.", "Parse event logs into content-level findings.", "Run timeline generation if runtime budget allows.", "Replace reviewer-derived manifest entries if official ground truth becomes available."],
+        next_actions=["Expand registry parsing beyond Run keys and services.", "Correlate parsed event content with registry and timeline anchors.", "Run timeline generation if runtime budget allows.", "Replace reviewer-derived manifest entries if official ground truth becomes available."],
         evidence_book=evidence_book,
         correction_entries=correction_entries,
         accuracy=accuracy,
@@ -477,6 +592,7 @@ def run_case(*, case_id: str, evidence_path: Path, case_workspace: Path, expecte
                     ("filesystem_inventory", "reports/replay_consistency.md"),
                     ("extract_registry_persistence", findings[3].evidence_refs[0]),
                     ("extract_registry_persistence", findings[3].evidence_refs[0]),
+                    ("extract_event_records", findings[4].evidence_refs[0] if len(findings) > 4 else "exports/event_content_summary.json"),
                     ("verify_claim", "reports/correction_ledger.md"),
                 ],
                 start=1,
@@ -509,6 +625,7 @@ def run_case(*, case_id: str, evidence_path: Path, case_workspace: Path, expecte
             "mcafee_event_paths": len(mcafee_records),
             "registry_run_key_records": len(run_key_content.records),
             "registry_service_records": len(service_content.records),
+            "event_content_records": len(event_content.records),
         },
         "evidence_unchanged": evidence_unchanged.passed,
     }

@@ -39,9 +39,10 @@ evidence records, drop unsupported claims, and preserve an execution trail.
 The selected real evidence image is present locally and has a bounded real run
 under `cases/CASE-RD01/`. The current successful path includes deterministic MCP
 backend execution through WSL forensic tools, `icat` extraction of registry
-hives, RegRipper parsing of SOFTWARE Run keys and SYSTEM services, and a short
-OpenRouter autonomous agent smoke run against the real evidence. Full incident
-reconstruction is still not claimed.
+hives and EVTX logs, RegRipper parsing of SOFTWARE Run keys and SYSTEM services,
+bounded `python-evtx` event-content parsing when local Plaso is degraded, and a
+short OpenRouter autonomous agent smoke run against the real evidence. Full
+incident reconstruction is still not claimed.
 
 Empty and degraded states are explicit:
 
@@ -58,7 +59,8 @@ Empty and degraded states are explicit:
 ## What It Does
 
 - Starts a local MCP server with read-only wrappers for `mmls`, `fls`,
-  `icat`, `log2timeline.py`, `psort.py`, and `rip.pl`.
+  `icat`, `log2timeline.py`, `psort.py`, and `rip.pl`, with a `python-evtx`
+  fallback for bounded EVTX parsing.
 - Runs a bounded AI execution loop over MCP stdio with implemented Anthropic,
   OpenRouter, and Groq provider paths.
 - Requires `verify_claim` before final findings are reported as confirmed.
@@ -98,6 +100,9 @@ Final submission control docs:
   judging-criteria gate matrix.
 - [`docs/final_release_go_no_go_2026-05-07.md`](docs/final_release_go_no_go_2026-05-07.md):
   final go/no-go board.
+- [`scripts/final_submission_audit.py`](scripts/final_submission_audit.py):
+  final 100-point gate for required files, public repo sync, public video URL,
+  and submitted Devpost URL.
 
 ## Architecture & Security Boundaries
 
@@ -127,10 +132,10 @@ python -m pip install -r requirements.txt
 
 ### 2. Configure the implemented model runtime
 
-For a free/low-cost local setup, prefer OpenRouter first. Groq is also supported
-as an implemented OpenAI-compatible runtime, but the local Groq key may be
-account-blocked or rate-limited even when its syntax is valid. Anthropic remains
-supported if you have a valid key.
+For a free/low-cost local setup, prefer OpenRouter first because it is the
+current selected demo runtime in `auto` mode. Groq is also supported as an
+implemented OpenAI-compatible runtime and currently passes `--check-api` in
+this workspace. Anthropic remains supported if you have a valid key.
 
 ```bash
 export FIND_EVIL_AGENT_PROVIDER="auto"
@@ -218,6 +223,14 @@ agent_execution_log.jsonl
 ```bash
 python -m pytest tests
 python -m py_compile src/agent.py src/prompts.py src/server.py
+python scripts/final_submission_audit.py --json
+```
+
+The final submission audit intentionally stays `blocked` until the public
+YouTube/Vimeo/Youku demo URL and submitted Devpost URL are supplied:
+
+```bash
+python scripts/final_submission_audit.py --demo-video-url VIDEO_URL --devpost-url DEVPOST_URL --strict
 ```
 
 ## Repository Structure
@@ -268,18 +281,25 @@ python -m py_compile src/agent.py src/prompts.py src/server.py
   public-safe real CASE-RD01 step trace and self-correction pointer.
 - [`docs/public_real_execution_log_sample.jsonl`](docs/public_real_execution_log_sample.jsonl):
   redacted real execution-log excerpt generated from `cases/CASE-RD01`.
+- [`docs/autonomous_smoke_hardening_2026-05-07.md`](docs/autonomous_smoke_hardening_2026-05-07.md):
+  live OpenRouter smoke findings and agent-loop hardening against invalid tool
+  calls, oversized tool context, and inaccurate stop-reason reporting.
 - [`agent_execution_log.jsonl`](agent_execution_log.jsonl): synthetic
   judge-facing execution log sample.
 
 ## Current Limitations
 
 - Full incident reconstruction remains open.
-- The local Groq key is syntactically present but returned HTTP 403 during live
-  smoke testing; OpenRouter is the current working free/low-cost runtime path.
-- Event-log content, full timeline, and deeper registry correlation remain
-  open; bounded SOFTWARE Run-key and SYSTEM service parsing is present.
+- OpenRouter is the current selected free/low-cost runtime path for the final
+  demo; Groq is implemented and currently passes API readiness. OpenRouter
+  short smoke runs are useful for showing the bounded model loop, but the
+  deterministic real evidence run remains the primary proof path for the video.
+- Bounded event-log content parsing is now present; full timeline and deeper
+  registry/event correlation remain open.
 - Demo video upload and Devpost submission remain external gates. Draft text
-  and recording script are now included in `docs/`.
+  and recording script are now included in `docs/`, and
+  `scripts/final_submission_audit.py` is the final 100-point gate before
+  pressing Submit.
 
 ## Contribution Path
 

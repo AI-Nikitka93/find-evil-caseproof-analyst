@@ -15,8 +15,8 @@ Audience: FIND EVIL judges and practitioners testing the repository locally.
 - One implemented model provider key for autonomous mode:
   - preferred current path: `OPENROUTER_API_KEY`;
   - optional: valid `ANTHROPIC_API_KEY`;
-  - Groq is implemented, but the local test key returned HTTP 403 and should be
-    re-tested before relying on it.
+  - Groq is implemented and currently passes API readiness here, but use the
+    provider that is freshly verified for your run.
 - Real evidence file placed under `evidence/`.
 
 ## Setup
@@ -102,6 +102,13 @@ Verify:
 py scripts\audit_real_validation.py --case-workspace cases\CASE-RD01-JUDGE --strict
 ```
 
+For a final submission package check after the public video and Devpost page
+exist:
+
+```powershell
+py scripts\final_submission_audit.py --demo-video-url VIDEO_URL --devpost-url DEVPOST_URL --strict
+```
+
 ## Autonomous Agent Smoke
 
 Use this to test the model + MCP stdio loop:
@@ -124,7 +131,7 @@ Interpretation:
 | `python` is not recognized | Windows launcher exists but `python` is not on `PATH` | Use `py` commands. |
 | Missing SIFT binaries | Runtime is not SIFT-compatible enough for real run | Install SIFT tools or run in SANS SIFT/WSL with the required commands. |
 | Missing API key | Autonomous model runtime cannot start | Configure `OPENROUTER_API_KEY` or another implemented provider key. |
-| Groq HTTP 403 | Key/account/model access rejected by provider | Use OpenRouter or replace/retest the Groq key. |
+| Provider HTTP 403 | Key/account/model access rejected by provider | Use OpenRouter or replace/retest the provider key. |
 | Evidence path missing | Real evidence is not in local ignored `evidence/` | Place the `.E01` under `evidence/` and do not commit it. |
 | Workspace rejected | Output path is inside evidence or outside allowed case workspace | Use `cases/<CASE-ID>`. |
 | No confirmed compromise finding | Bounded run did not parse enough content-level evidence | Treat compromise status as unknown; do not upgrade to confirmed. |
@@ -148,3 +155,6 @@ If a judge run fails:
 The current project should produce a defensible first triage package. It should
 not be expected to produce a full incident reconstruction until registry,
 event, and timeline content parsing are completed.
+
+The final submission audit should only reach 100/100 after the public video URL,
+submitted Devpost URL, and public repository synchronization are all real.

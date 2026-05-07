@@ -13,6 +13,8 @@ private `evidence/` directory.
 It preserves the information needed for the FIND EVIL audit-trail
 requirement: step order, timestamp, tool name, parser status, output
 reference, token-usage field, and the visible self-correction reason.
+For deterministic backend-only steps, `token_usage` may be `null`;
+autonomous AI smoke logs carry model usage when the provider returns it.
 
 ## Public Files
 
@@ -42,7 +44,8 @@ reference, token-usage field, and the visible self-correction reason.
 | 5 | `filesystem_inventory` | `ok` | `reports/replay_consistency.md` | None | Replay root inventory to prove the output is reproducible rather than a one-off artifact. |
 | 6 | `extract_registry_persistence` | `ok` | `exports/registry_content_summary.json` | None | Extract SOFTWARE Run key content after copying the hive out of the evidence image with icat. |
 | 7 | `extract_registry_persistence` | `ok` | `exports/registry_content_summary.json` | None | Extract SYSTEM service content to move beyond artifact presence into bounded registry analysis. |
-| 8 | `verify_claim` | `ok` | `reports/correction_ledger.md` | Unsupported compromise claim dropped from confirmed findings. | Challenge an attractive but unsupported compromise claim before final reporting. |
+| 8 | `extract_event_records` | `partial` | `exports/event_content_summary.json` | None | Parse bounded Windows event-log content from extracted EVTX files instead of stopping at path presence. |
+| 9 | `verify_claim` | `ok` | `reports/correction_ledger.md` | Unsupported compromise claim dropped from confirmed findings. | Challenge an attractive but unsupported compromise claim before final reporting. |
 
 ## Self-Correction Signal
 
@@ -50,12 +53,13 @@ The final `verify_claim` step challenges the tempting claim
 `Confirmed compromise or persistence on RD01` and records the correction
 reason `Unsupported compromise claim dropped from confirmed findings.`
 That is the public demo moment: the system refuses to upgrade artifact
-presence into a confirmed malicious finding without content-level evidence.
+presence and bounded event/registry content into a confirmed malicious finding
+without cross-artifact evidence.
 
 ## Limits
 
 - This is a redacted execution-log excerpt, not the full local case workspace.
-- Registry Run-key and service content is parsed in this bounded run; event-log,
-  timeline, and deeper registry correlation remain future work.
+- Registry Run-key, service content, and bounded event-log content are parsed
+  in this run; full timeline and deeper cross-artifact correlation remain future work.
 - The public log proves traceability for the bounded real run, not full
   incident reconstruction.

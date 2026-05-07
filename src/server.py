@@ -5,6 +5,7 @@ import json
 import os
 import re
 import subprocess
+import xml.etree.ElementTree as ET
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
@@ -918,13 +919,12 @@ def build_timeline(request: BuildTimelineInput) -> BuildTimelineOutput:
     jsonl_file = _workspace_file(state, state.exports_dir, f"{request.evidence_id}_timeline.jsonl", label="timeline export")
     log2timeline_args = [
         "log2timeline.py",
-        "--storage-file",
-        str(storage_file),
         "--parsers",
         request.parser_preset,
         "--timezone",
         request.timezone,
         "--unattended",
+        str(storage_file),
         str(source_path),
     ]
     psort_args = ["psort.py", "-o", "json_line", "-w", str(jsonl_file), str(storage_file)]
@@ -1183,6 +1183,63 @@ def _read_json_line_events(
     return records, truncated
 
 
+def _read_evtx_records_with_python_evtx(
+    path: Path,
+    *,
+    evidence_id: str,
+    max_records: int,
+    event_ids: set[int],
+) -> tuple[list[EventRecord], bool]:
+    try:
+        from Evtx.Evtx import Evtx  # type: ignore[import-not-found]
+    except ImportError as exc:
+        _raise_tool_error("python-evtx fallback is unavailable; install requirements.txt")
+        raise AssertionError("unreachable") from exc
+
+    records: list[EventRecord] = []
+    truncated = False
+    channel = _event_channel_from_path(path)
+    namespace = {"event": "http://schemas.microsoft.com/win/2004/08/events/event"}
+    with Evtx(str(path)) as event_log:
+        for index, record in enumerate(event_log.records(), start=1):
+            if len(records) >= max_records:
+                truncated = True
+                break
+            try:
+                xml_text = record.xml()
+                root = ET.fromstring(xml_text)
+            except Exception:
+                continue
+            event_id_element = root.find("./event:System/event:EventID", namespace)
+            try:
+                event_id = int((event_id_element.text if event_id_element is not None else "0") or "0")
+            except ValueError:
+                event_id = 0
+            if event_ids and event_id not in event_ids:
+                continue
+            provider_element = root.find("./event:System/event:Provider", namespace)
+            time_element = root.find("./event:System/event:TimeCreated", namespace)
+            timestamp_text = time_element.attrib.get("SystemTime") if time_element is not None else None
+            provider = provider_element.attrib.get("Name") if provider_element is not None else None
+            records.append(
+                EventRecord(
+                    record_id=f"{evidence_id}:event:{path.name}:{index}",
+                    event_id=event_id,
+                    channel=channel,
+                    source_path=str(path),
+                    timestamp_utc=_parse_datetime(timestamp_text),
+                    provider=provider,
+                    rendered_message=xml_text[:1000],
+                    fields={
+                        "parser": "python-evtx",
+                        "record_number": index,
+                        "xml_excerpt": xml_text[:3000],
+                    },
+                )
+            )
+    return records, truncated
+
+
 @mcp.tool()
 def extract_event_records(request: ExtractEventRecordsInput) -> ExtractEventRecordsOutput:
     """Extract selected Windows event records relevant to incident triage."""
@@ -1191,6 +1248,8 @@ def extract_event_records(request: ExtractEventRecordsInput) -> ExtractEventReco
     all_records: list[EventRecord] = []
     truncated = False
     last_args: list[str] = []
+    command_tool = "psort.py"
+    command_parser = "plaso_event_json_line"
     for event_log_text in request.event_log_paths:
         event_log_path = _resolve_input_path(event_log_text, must_exist=True, label="event_log_path")
         channel = _event_channel_from_path(event_log_path)
@@ -1210,26 +1269,38 @@ def extract_event_records(request: ExtractEventRecordsInput) -> ExtractEventReco
         )
         log2timeline_args = [
             "log2timeline.py",
-            "--storage-file",
-            str(storage_file),
             "--parsers",
             "winevtx",
             "--timezone",
             "UTC",
             "--unattended",
+            str(storage_file),
             str(event_log_path),
         ]
         psort_args = ["psort.py", "-o", "json_line", "-w", str(jsonl_file), str(storage_file)]
         last_args = psort_args
-        _run_command("log2timeline.py", log2timeline_args, timeout=DEFAULT_TIMEOUT_SECONDS * 2)
-        _run_command("psort.py", psort_args, timeout=DEFAULT_TIMEOUT_SECONDS * 2)
-        records, file_truncated = _read_json_line_events(
-            jsonl_file,
-            evidence_id=request.evidence_id,
-            source_path=event_log_path,
-            max_records=request.max_records - len(all_records),
-            event_ids=event_ids,
-        )
+        try:
+            _run_command("log2timeline.py", log2timeline_args, timeout=DEFAULT_TIMEOUT_SECONDS * 2)
+            _run_command("psort.py", psort_args, timeout=DEFAULT_TIMEOUT_SECONDS * 2)
+            records, file_truncated = _read_json_line_events(
+                jsonl_file,
+                evidence_id=request.evidence_id,
+                source_path=event_log_path,
+                max_records=request.max_records - len(all_records),
+                event_ids=event_ids,
+            )
+            command_tool = "psort.py"
+            command_parser = "plaso_event_json_line"
+        except ToolError:
+            last_args = ["python-evtx", str(event_log_path)]
+            records, file_truncated = _read_evtx_records_with_python_evtx(
+                event_log_path,
+                evidence_id=request.evidence_id,
+                max_records=request.max_records - len(all_records),
+                event_ids=event_ids,
+            )
+            command_tool = "python-evtx"
+            command_parser = "python_evtx_xml"
         records = [
             record
             for record in records
@@ -1257,9 +1328,9 @@ def extract_event_records(request: ExtractEventRecordsInput) -> ExtractEventReco
         records=all_records,
         truncated=truncated,
         command_plan=CommandPlan(
-            tool="psort.py",
+            tool=command_tool,
             arguments=last_args,
-            parser="plaso_event_json_line",
+            parser=command_parser,
             expected_output="Windows event records",
         ),
     )

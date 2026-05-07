@@ -43,12 +43,11 @@ Expected safe behavior:
 - blocks real SIFT readiness when required forensic tools are missing;
 - does not promote unimplemented candidate providers to implemented runtime.
 
-## Verified Local Status On 2026-05-06
+## Verified Local Status On 2026-05-07
 
 - API readiness command completed without printing secret values.
-- OpenRouter is the current working free/low-cost runtime path.
-- Groq is implemented, but the local key returned HTTP 403 during live smoke
-  testing.
+- OpenRouter is the current selected free/low-cost runtime path.
+- Groq is implemented and currently passes API readiness.
 - SIFT readiness passes through WSL forensic commands.
 - Real bounded CASE-RD01 validation exists; full long-run autonomous
   investigation is still not claimed.

@@ -24,7 +24,7 @@ Last updated: 2026-05-07
 
 ## Runtime Used
 
-The 2026-05-06 real bounded pass used WSL Ubuntu with these forensic commands
+The 2026-05-07 real bounded pass used WSL Ubuntu with these forensic commands
 available:
 
 - `mmls`;
@@ -36,11 +36,14 @@ available:
   `rip.pl` requirement.
 
 The runtime is SIFT-compatible for the required tool families, but it is not the
-official SANS SIFT OVA. Public copy must keep that distinction visible.
+official SANS SIFT OVA. The local Plaso install currently fails EVTX extraction
+with a missing `MacOSLocalTime` artifact definition, so `extract_event_records`
+falls back to the committed `python-evtx` dependency for bounded EVTX content
+parsing. Public copy must keep that distinction visible.
 
 ## Run Scope
 
-Run ID: `real-20260507T053704Z`
+Run ID: `real-20260507T101441Z`
 
 Completed scope:
 
@@ -54,6 +57,8 @@ Completed scope:
 - `icat` extraction of `SOFTWARE` and `SYSTEM` hives from the `.E01` into the
   case workspace;
 - bounded RegRipper parsing of SOFTWARE Run keys and SYSTEM services;
+- `icat` extraction of `Security.evtx`, `System.evtx`, and `Application.evtx`
+  followed by bounded `python-evtx` content parsing;
 - root-inventory replay consistency check;
 - final analyst report, evidence book, correction ledger, real-run accuracy
   report, execution log review, judge summary, and artifact index generation.
@@ -62,7 +67,7 @@ Not completed in this bounded run:
 
 - full Plaso timeline;
 - registry parsing beyond SOFTWARE Run keys and SYSTEM services;
-- event log content parsing;
+- event parsing beyond the first bounded 120 records;
 - content-level persistence finding;
 - content-level compromise finding;
 - official ground-truth scoring.
@@ -84,6 +89,7 @@ ignored from public repository packaging.
 | Root inventory export | `cases/CASE-RD01/exports/root_inventory.json` |
 | High-signal inventory export | `cases/CASE-RD01/exports/high_signal_inventory.json` |
 | Registry content summary | `cases/CASE-RD01/exports/registry_content_summary.json` |
+| Event content summary | `cases/CASE-RD01/exports/event_content_summary.json` |
 | Preflight export | `cases/CASE-RD01/exports/preflight_report.json` |
 
 ## Observed Artifact Counts
@@ -100,11 +106,12 @@ From `cases/CASE-RD01/reports/real_run_summary.json`:
 | McAfee event-path records | 3 |
 | SOFTWARE Run key records parsed | 5 |
 | SYSTEM service records parsed | 80 |
+| EVTX content records parsed | 120 |
 
 ## Confirmed Real Findings
 
 The bounded pass confirmed evidence-integrity, artifact-availability, and
-bounded registry-content facts:
+bounded registry/event-content facts:
 
 - `F001`: RD01 EWF evidence opened read-only and matched expected SHA256.
 - `F002`: RD01 is analyzable as an NTFS volume image at sector `0`.
@@ -112,6 +119,8 @@ bounded registry-content facts:
   triage.
 - `F004`: SOFTWARE Run keys and SYSTEM service entries were extracted from the
   real image and parsed into bounded registry content records.
+- `F005`: Security/System/Application EVTX files were extracted from the real
+  image and parsed into 120 bounded event records.
 
 No malicious finding is confirmed by this run.
 
@@ -134,15 +143,15 @@ It must not be described as real CASE-RD01 accuracy.
   reconstruction.
 - The WSL toolchain is not the official SANS SIFT OVA.
 - No official answer key is available in local project materials.
-- Event-log content, full timeline, and registry analysis beyond Run keys and
-  services remain unparsed in this bounded pass.
+- Full timeline, registry analysis beyond Run keys/services, and deeper
+  registry/event/timeline correlation remain unparsed in this bounded pass.
 
 ## Next Dataset Work
 
 - Run a longer OpenRouter/Groq/Anthropic autonomous loop when provider limits
   allow it.
-- Expand registry parsing beyond Run keys/services and parse event logs into
-  content-level findings.
+- Expand registry parsing beyond Run keys/services and correlate parsed event
+  content into evidence-backed findings.
 - Run or bound full timeline generation.
 - Update the reviewer-derived manifest from content-level evidence.
 - Prepare public-safe excerpts or summaries for submission without publishing

@@ -163,8 +163,8 @@ bounded CASE-RD01 pass:
 
 ## Current Release Blockers
 
-- Full long-run autonomous AI investigation remains open; OpenRouter is the current working free/low-cost smoke-tested runtime path, while the local Groq key returned HTTP 403.
-- Event-log content, full timeline, and deeper registry correlation remain open; bounded SOFTWARE Run-key and SYSTEM service parsing now exists.
+- Full long-run autonomous AI investigation remains open; OpenRouter is the current selected free/low-cost demo runtime path, while Groq is implemented and currently passes API readiness.
+- Full timeline and deeper registry/event correlation remain open; bounded SOFTWARE Run-key, SYSTEM service, and EVTX event parsing now exists.
 - Public GitHub repository is verified at `https://github.com/AI-Nikitka93/find-evil-caseproof-analyst`.
 - Demo video is not recorded or uploaded.
 - Public video visibility and public GitHub diagram/link rendering are not verified.

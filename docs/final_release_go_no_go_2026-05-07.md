@@ -16,12 +16,14 @@ steps are complete; GO for public repository package.**
 | Accuracy report exists | GO | `docs/accuracy_report.md` |
 | Real bounded CASE-RD01 pass exists | GO | `cases/CASE-RD01/` local package |
 | Bounded registry content proof exists | GO | `cases/CASE-RD01/exports/registry_content_summary.json` |
+| Bounded event content proof exists | GO | `cases/CASE-RD01/exports/event_content_summary.json` |
 | Execution log exists locally | GO | `cases/CASE-RD01/logs/agent_execution.jsonl` |
 | Traceability walkthrough exists | GO | `docs/reviewer_traceability_walkthrough.md` |
 | Devpost text draft exists | GO | `docs/final_submission_package.md` |
 | Demo script exists | GO | `docs/demo_video_script.md` |
 | Judge runbook exists | GO | `docs/judge_try_it_out.md` |
 | Public GitHub URL | GO | https://github.com/AI-Nikitka93/find-evil-caseproof-analyst |
+| Final submission audit exists | GO | `scripts/final_submission_audit.py --json` |
 
 ## Current No-Go Items
 
@@ -30,6 +32,16 @@ steps are complete; GO for public repository package.**
 | Demo video URL | NO-GO | Record under-5-minute terminal demo with audio and upload publicly. |
 | Devpost form | NO-GO | Paste final English text, public repo URL, and video URL into Devpost. |
 | Final video/Devpost link audit | NO-GO | Check public video and final Devpost links from a non-private session. |
+
+Use this command as the final mechanical gate after the video and Devpost page
+exist:
+
+```powershell
+py scripts\final_submission_audit.py --demo-video-url VIDEO_URL --devpost-url DEVPOST_URL --strict
+```
+
+The command must reach `ready (100/100)` before final submission is treated as
+complete.
 
 ## Accepted Limitations
 
@@ -40,12 +52,13 @@ These limitations are acceptable if stated honestly:
   availability, bounded SOFTWARE Run-key/SYSTEM service parsing, and
   correction behavior;
 - no confirmed malicious finding is claimed;
-- event-log content, full timeline, and deeper registry correlation remain
-  future work;
+- bounded event content is parsed, while full timeline and deeper
+  registry/event correlation remain future work;
 - WSL runtime is SIFT-compatible for tested tools but not the official SANS
   SIFT OVA;
-- OpenRouter is the current working free/low-cost smoke-tested runtime path;
-- Groq returned HTTP 403 in local live testing.
+- OpenRouter is the current selected free/low-cost demo runtime path;
+- Groq is implemented and currently passes API readiness, but should only be
+  named in the final video if the recorded run uses it successfully.
 
 ## Not Accepted
 
@@ -54,7 +67,7 @@ The submission must not claim:
 - full incident reconstruction;
 - full SIFT coverage;
 - real APT accuracy beyond the bounded CASE-RD01 pass;
-- Groq is working unless a fresh live run succeeds;
+- a specific provider is used in the demo unless the recorded run proves it;
 - demo video completion before the video is uploaded and visible;
 
 ## Legal And License Review
@@ -89,4 +102,6 @@ Do not press Submit until all three conditions are true:
 
 1. Demo video URL verified.
 2. Devpost text copied from `docs/final_submission_package.md` and checked.
-3. Final local verification commands pass.
+3. `py scripts\final_submission_audit.py --demo-video-url VIDEO_URL --devpost-url DEVPOST_URL --strict`
+   returns ready.
+4. Final local verification commands pass.

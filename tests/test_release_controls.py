@@ -22,12 +22,15 @@ def test_release_controls_report_passes_current_contracts() -> None:
         "docs/public_real_execution_log_sample.jsonl",
         "docs/public_real_traceability_packet.md",
         "docs/final_release_go_no_go_2026-05-07.md",
+        "docs/autonomous_smoke_hardening_2026-05-07.md",
     ):
         assert path in audit_release_controls.REQUIRED_DOCS
 
     public_log_check = next(check for check in report["checks"] if check["name"] == "public_real_execution_log_sample")
     assert public_log_check["ok"] is True
     assert "public-safe real log records" in public_log_check["detail"]
+    final_audit_check = next(check for check in report["checks"] if check["name"] == "final_submission_audit_exists")
+    assert final_audit_check["ok"] is True
 
 
 def test_release_controls_detects_missing_ignore_pattern(tmp_path: Path) -> None:
