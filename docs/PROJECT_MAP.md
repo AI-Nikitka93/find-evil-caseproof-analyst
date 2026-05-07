@@ -180,7 +180,7 @@ Completed backend scope:
 
 Still open:
 
-- Public GitHub publication and post-publication link/render verification.
+- Final video and Devpost link/render verification after upload/submission.
 - Demo video recording, public upload, and visibility verification.
 - Devpost form submission with public links.
 - Full long-run autonomous investigation beyond the short OpenRouter smoke run.

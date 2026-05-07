@@ -156,7 +156,7 @@ values.
 ### 3. Check SIFT tools
 
 Use this before a real evidence run. The real DFIR path requires `mmls`,
-`fls`, `log2timeline.py`, `psort.py`, and `rip.pl` in `PATH`.
+`fls`, `icat`, `log2timeline.py`, `psort.py`, and `rip.pl` in `PATH`.
 
 ```bash
 python scripts/check_env.py --strict
@@ -278,8 +278,8 @@ python -m py_compile src/agent.py src/prompts.py src/server.py
   smoke testing; OpenRouter is the current working free/low-cost runtime path.
 - Event-log content, full timeline, and deeper registry correlation remain
   open; bounded SOFTWARE Run-key and SYSTEM service parsing is present.
-- Public GitHub publication and demo video upload remain external submission
-  gates. Draft text and recording script are now included in `docs/`.
+- Demo video upload and Devpost submission remain external gates. Draft text
+  and recording script are now included in `docs/`.
 
 ## Contribution Path
 
