@@ -1,14 +1,12 @@
 {
   "current_goal": "Build a read-only Custom MCP Server for Windows disk triage.",
-  "current_task": "Final local submission package prepared with public-safe real execution trace and bounded registry content proof; remaining blockers are external public GitHub and demo video gates.",
-  "status": "LOCAL_PACKAGE_READY_EXTERNAL_SUBMISSION_BLOCKED",
-  "active_step": "Publish public GitHub repository, record/upload demo video, paste Devpost text, and verify public links.",
-  "next_step": "Create verified public GitHub URL and public demo video URL, then run final public link audit before Devpost submission.",
+  "current_task": "Final local submission package prepared with public-safe real execution trace, bounded registry content proof, and verified public GitHub repository; remaining blockers are demo video and Devpost gates.",
+  "status": "PUBLIC_REPO_READY_EXTERNAL_SUBMISSION_BLOCKED",
+  "active_step": "Record/upload demo video, paste Devpost text, and verify final public links.",
+  "next_step": "Create verified public demo video URL, then run final public link audit before Devpost submission.",
   "blockers": [
-    "public GitHub publication is not verified",
     "demo video is not recorded or uploaded",
     "public video visibility is not verified",
-    "public GitHub diagram/link rendering is not verified",
     "Devpost form is not submitted",
     "event-log content, full timeline, and deeper registry correlation remain open as accepted limitations",
     "local Groq key returns HTTP 403 during live smoke testing"

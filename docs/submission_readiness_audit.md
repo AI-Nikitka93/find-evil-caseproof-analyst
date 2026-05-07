@@ -42,7 +42,7 @@ Verdict: **LOCAL PACKAGE PREPARED - external Devpost gates still block final sub
 | Demo video script | Ready | `docs/demo_video_script.md` |
 | Judge try-it-out instructions | Ready | `docs/judge_try_it_out.md` |
 | Quality gate matrix | Ready | `docs/final_quality_gate_matrix.md` |
-| Public repository publication | Not verified | Current workspace is not a git repository |
+| Public repository publication | Verified | https://github.com/AI-Nikitka93/find-evil-caseproof-analyst |
 
 ## Judging Criteria Mapping
 
@@ -53,17 +53,16 @@ Verdict: **LOCAL PACKAGE PREPARED - external Devpost gates still block final sub
 | Breadth and depth | Narrow Windows disk-image lane works for evidence access, volume detection, filesystem artifact discovery, and bounded registry content. Event/timeline content remains open. | PARTIAL |
 | Constraint implementation | Fixed MCP tools, no generic shell, read-only evidence boundary, real-output validation gates. | STRONG |
 | Audit trail | Real JSONL execution log, public-safe real excerpt, evidence book, correction ledger, replay consistency, artifact index. | STRONG |
-| Usability | README, preflight, judge runbook, troubleshooting, and recovery instructions exist; public GitHub path still external. | PARTIAL |
+| Usability | README, preflight, judge runbook, troubleshooting, recovery instructions, and public GitHub URL exist. | PARTIAL |
 
 ## No-Go Blockers
 
 1. Demo video is not recorded and uploaded.
-2. Public GitHub repository publication is not verified.
-3. Devpost form is not submitted with public repo and video URLs.
-4. Local Groq key returned HTTP 403 during live smoke testing; OpenRouter is the
+2. Devpost form is not submitted with public repo and video URLs.
+3. Local Groq key returned HTTP 403 during live smoke testing; OpenRouter is the
    current working free/low-cost autonomous runtime path.
-5. Event-log content, full timeline, and deeper registry correlation remain open.
-6. Raw local `cases/CASE-RD01/` outputs remain local-only by default; the
+4. Event-log content, full timeline, and deeper registry correlation remain open.
+5. Raw local `cases/CASE-RD01/` outputs remain local-only by default; the
    public-safe real execution excerpt is now published under `docs/`.
 
 ## Current Go/No-Go
@@ -72,5 +71,5 @@ Verdict: **LOCAL PACKAGE PREPARED - external Devpost gates still block final sub
 - GO for showing a bounded real evidence pass honestly.
 - NO-GO for claiming full autonomous AI investigation completion.
 - NO-GO for claiming full incident reconstruction.
-- NO-GO for final Devpost submission until public GitHub URL, public video URL,
-  Devpost form, and post-publication link checks are complete.
+- NO-GO for final Devpost submission until public video URL, Devpost form, and
+  final public link checks are complete.

@@ -25,7 +25,7 @@ def test_phase_gate_reports_only_external_submission_gates_open() -> None:
         if line.startswith("[ ] T")
     ]
 
-    assert open_items == ["T153", "T154", "T160", "T161", "T163", "T179"]
+    assert open_items == ["T154", "T160", "T161", "T163", "T179"]
 
 
 def test_focused_master_todo_removes_post_release_bloat_from_active_path() -> None:

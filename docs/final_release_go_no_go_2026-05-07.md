@@ -1,8 +1,8 @@
 # Final Release Go/No-Go Board
 
 Date: 2026-05-07  
-Current decision: **NO-GO for Devpost submission until external publication
-steps are complete; GO for final local package preparation.**
+Current decision: **NO-GO for Devpost submission until video and Devpost
+steps are complete; GO for public repository package.**
 
 ## Current Go Items
 
@@ -21,15 +21,15 @@ steps are complete; GO for final local package preparation.**
 | Devpost text draft exists | GO | `docs/final_submission_package.md` |
 | Demo script exists | GO | `docs/demo_video_script.md` |
 | Judge runbook exists | GO | `docs/judge_try_it_out.md` |
+| Public GitHub URL | GO | https://github.com/AI-Nikitka93/find-evil-caseproof-analyst |
 
 ## Current No-Go Items
 
 | Item | Status | Required action |
 |---|---:|---|
-| Public GitHub URL | NO-GO | Publish this repository publicly and verify license/README/link rendering. |
 | Demo video URL | NO-GO | Record under-5-minute terminal demo with audio and upload publicly. |
 | Devpost form | NO-GO | Paste final English text, public repo URL, and video URL into Devpost. |
-| Link audit after publication | NO-GO | Check public GitHub and video links from a non-private session. |
+| Final video/Devpost link audit | NO-GO | Check public video and final Devpost links from a non-private session. |
 
 ## Accepted Limitations
 
@@ -55,8 +55,7 @@ The submission must not claim:
 - full SIFT coverage;
 - real APT accuracy beyond the bounded CASE-RD01 pass;
 - Groq is working unless a fresh live run succeeds;
-- public repository publication before the URL is verified;
-- demo video completion before the video is uploaded and visible.
+- demo video completion before the video is uploaded and visible;
 
 ## Legal And License Review
 
@@ -86,9 +85,8 @@ change.
 
 ## Final Submission Decision
 
-Do not press Submit until all four conditions are true:
+Do not press Submit until all three conditions are true:
 
-1. Public GitHub URL verified.
-2. Demo video URL verified.
-3. Devpost text copied from `docs/final_submission_package.md` and checked.
-4. Final local verification commands pass.
+1. Demo video URL verified.
+2. Devpost text copied from `docs/final_submission_package.md` and checked.
+3. Final local verification commands pass.

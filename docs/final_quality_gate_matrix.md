@@ -12,9 +12,9 @@ Project: CaseProof Analyst / Evidence-Locked Self-Correcting Disk Triage MCP
 | Breadth and depth | PARTIAL | Real bounded RD01 pass, high-signal inventory, reviewer-derived manifest | Depth is honest but intentionally narrow. |
 | Constraint implementation | STRONG | Eight fixed MCP tools, no generic shell, read-only evidence boundary | Final public docs must not imply broad SIFT coverage. |
 | Audit trail quality | STRONG | `cases/CASE-RD01/logs/agent_execution.jsonl`, `docs/public_real_execution_log_sample.jsonl`, evidence book, correction ledger | Public excerpt is sanitized; raw local case outputs are ignored from public repo by policy. |
-| Usability and documentation | READY FOR PUBLIC PACKAGE | README, `docs/judge_try_it_out.md`, troubleshooting, recovery instructions | Clean external judge machine run and public GitHub URL still need final verification. |
+| Usability and documentation | READY FOR PUBLIC PACKAGE | README, `docs/judge_try_it_out.md`, troubleshooting, recovery instructions, public GitHub URL | Clean external judge machine run still needs final verification. |
 | Submission media | NOT COMPLETE | `docs/demo_video_script.md` | Actual video recording and public upload remain external actions. |
-| Public release hygiene | READY LOCALLY | release-control audit, ignored-file policy, secret scans | Current folder is not a git repository, so GitHub publication cannot be verified locally. |
+| Public release hygiene | PUBLISHED | release-control audit, ignored-file policy, secret scans, public GitHub repository | Video URL and Devpost link audit remain external. |
 
 ## Judging Criteria Mapping
 
@@ -117,7 +117,6 @@ Final wording:
 The project is locally package-ready after verification passes, but the final
 submission remains blocked until:
 
-1. a public GitHub repository URL exists and is verified;
-2. the demo video is recorded, uploaded, and publicly visible;
-3. the Devpost submission is filled using the prepared English text;
-4. final links are checked from a non-private browser session.
+1. the demo video is recorded, uploaded, and publicly visible;
+2. the Devpost submission is filled using the prepared English text and public GitHub URL;
+3. final links are checked from a non-private browser session.

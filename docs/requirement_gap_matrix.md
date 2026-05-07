@@ -5,7 +5,7 @@ Purpose: close TODO T005 by mapping contest requirements to current artifacts, g
 
 | Contest requirement | Current project artifact | Current status | Gap | Next concrete result |
 |---|---|---:|---|---|
-| Public code repository with open-source license | `README.md`, `LICENSE`, `src/`, `tests/` | Partial | Local repository package exists, public GitHub publication is not verified. | Public repository URL exists, license is visible, README links all required artifacts. |
+| Public code repository with open-source license | `README.md`, `LICENSE`, `src/`, `tests/`, https://github.com/AI-Nikitka93/find-evil-caseproof-analyst | Ready | Public GitHub repository is verified with MIT license. | Keep repository unchanged except for final video/Devpost link updates. |
 | Demo video | README placeholder | Missing | No live terminal screencast exists. | Public video shows real evidence run, audio narration, and visible self-correction. |
 | Architecture diagram | `docs/architecture.md`, `docs/mcp_architecture.md` | Present with verification needed | Mermaid rendering and public trust-boundary readability need final public check. | Public architecture diagram renders correctly and clearly marks evidence boundary. |
 | Written project description | `docs/final_submission_package.md` | Ready locally | Public Devpost form is not submitted. | Devpost story is pasted with final public GitHub/video URLs. |
@@ -23,6 +23,5 @@ Purpose: close TODO T005 by mapping contest requirements to current artifacts, g
 ## No-Go Until Closed
 
 - demo video is missing;
-- public repository URL is not verified;
 - Devpost form is not submitted;
 - public video and GitHub link checks are not complete.

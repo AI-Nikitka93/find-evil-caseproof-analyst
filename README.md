@@ -30,8 +30,9 @@ evidence records, drop unsupported claims, and preserve an execution trail.
 | Real evidence file | Present locally | `evidence/base-rd-01-cdrive.E01` is local-only and ignored |
 | Implemented model runtime | Ready locally | `python -m src.agent --check-api` selects OpenRouter/Groq/Anthropic without printing secrets |
 | SIFT-compatible runtime | Available through WSL | `py scripts\check_env.py --strict` |
+| Public GitHub repository | Published | https://github.com/AI-Nikitka93/find-evil-caseproof-analyst |
 | Final local package | Prepared with external gates | Devpost text, demo script, judge runbook, quality matrix, and go/no-go board are in `docs/` |
-| Final Devpost submission | External gates remain | public GitHub URL and public demo video URL must still be created and verified |
+| Final Devpost submission | External gates remain | public demo video URL and Devpost form submission still remain |
 
 ## Real Validation Status
 
@@ -76,7 +77,7 @@ correction ledger, an accuracy report, and replayable execution logs.
 
 | Required component | Status | Location |
 |---|---:|---|
-| Code Repo | Present locally; public URL still external | [`src/server.py`](src/server.py), [`src/agent.py`](src/agent.py), [`tests/`](tests/), [`docs/public_release_manifest.md`](docs/public_release_manifest.md) |
+| Code Repo | Published | https://github.com/AI-Nikitka93/find-evil-caseproof-analyst plus [`src/server.py`](src/server.py), [`src/agent.py`](src/agent.py), [`tests/`](tests/), [`docs/public_release_manifest.md`](docs/public_release_manifest.md) |
 | Demo Video | Script ready; recording/upload external | [`docs/demo_video_script.md`](docs/demo_video_script.md) |
 | Architecture Diagram | Present | [`docs/architecture.md`](docs/architecture.md) |
 | Project Description | Ready to paste | [`docs/final_submission_package.md`](docs/final_submission_package.md) |

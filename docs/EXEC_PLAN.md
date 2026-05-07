@@ -15,4 +15,4 @@
 | API and SIFT environment readiness checks | DONE | `src/agent.py --check-api`, `scripts/check_env.py`, `tests/test_env_check.py` |
 | Real bounded CASE-RD01 evidence run | DONE | Selected `.E01` evidence is present; SIFT-compatible tools are available through WSL; run produced evidence integrity, filesystem, registry Run-key/service content, correction ledger, accuracy report, and public-safe trace artifacts. |
 
-Next step group: public GitHub publish, demo video recording/upload, Devpost form submission, and clean public-link verification.
+Next step group: demo video recording/upload, Devpost form submission, and final public-link verification.

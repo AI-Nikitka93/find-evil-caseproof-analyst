@@ -20,12 +20,16 @@ relying on raw logs or confident AI prose.
 
 No Phase 5-specific blocker remains open.
 
-Cross-phase blockers still active:
+Historical cross-phase blockers at the time:
 
-- SIFT-compatible runtime commands are missing locally;
-- real SIFT validation is not complete;
-- final demo/submission materials are not complete;
-- public repository publication is not verified.
+- SIFT-compatible runtime commands were missing locally;
+- real SIFT validation was not complete;
+- final demo/submission materials were not complete;
+- public repository publication was not verified yet.
+
+Current 2026-05-07 update: SIFT-compatible runtime, real bounded CASE-RD01
+validation, and public repository publication are now verified. Demo video and
+Devpost submission remain external blockers.
 
 ## Transition Signal
 

@@ -9,7 +9,7 @@ The first full release is not submission-ready unless every required contest art
 
 | Required artifact | Release-ready condition | Current blocker |
 |---|---|---|
-| Public code repository | Public URL is available, license is visible, setup instructions work, no secrets or private evidence are included. | Public repository publication is not verified. |
+| Public code repository | Public URL is available, license is visible, setup instructions work, no secrets or private evidence are included. | Satisfied at https://github.com/AI-Nikitka93/find-evil-caseproof-analyst. |
 | Demo video | Live terminal screencast shows real evidence, audio narration, and visible self-correction. | Demo video is not created. |
 | Architecture diagram | Diagram clearly shows agent, SIFT tools, MCP server, evidence source, output flow, and trust boundary. | Public rendering still needs final verification. |
 | Written project description | Story explains what it does, how it works at product level, challenges, learnings, tradeoffs, and next steps. | Devpost form is not submitted. |

@@ -133,7 +133,7 @@ Next work is deeper content-level analysis:
 
 | Required component | Final submission value |
 |---|---|
-| Public code repository | Public GitHub URL after publication |
+| Public code repository | https://github.com/AI-Nikitka93/find-evil-caseproof-analyst |
 | License | MIT, `LICENSE` |
 | README setup | `README.md` |
 | Local run instructions | README plus `docs/judge_try_it_out.md` |
@@ -146,7 +146,7 @@ Next work is deeper content-level analysis:
 
 ## Final Paste Checklist
 
-- Replace `PUBLIC_GITHUB_URL` with the verified GitHub repository URL.
+- Use the verified GitHub repository URL: `https://github.com/AI-Nikitka93/find-evil-caseproof-analyst`.
 - Replace `DEMO_VIDEO_URL` with the public video URL.
 - Confirm the repository does not include `evidence/`, `cases/`, `.env.local`,
   or local-only notes.

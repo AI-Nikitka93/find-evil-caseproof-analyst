@@ -20,12 +20,16 @@ discipline without expanding scope into a generic DFIR platform.
 
 No Phase 3-specific blocker remains open.
 
-Cross-phase blockers still active:
+Historical cross-phase blockers at the time:
 
-- real `.E01` evidence is missing;
-- SIFT-compatible runtime commands are missing locally;
-- real SIFT validation is not complete;
-- final demo/submission materials are not complete.
+- real `.E01` evidence was missing;
+- SIFT-compatible runtime commands were missing locally;
+- real SIFT validation was not complete;
+- final demo/submission materials were not complete.
+
+Current 2026-05-07 update: the real evidence, SIFT-compatible runtime, bounded
+CASE-RD01 validation, and public repository are now verified. Demo video and
+Devpost submission remain external blockers.
 
 ## Transition Signal
 

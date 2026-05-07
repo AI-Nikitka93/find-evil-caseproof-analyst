@@ -93,7 +93,7 @@ bounded CASE-RD01 pass:
 
 ## PHASE 8 — Public Submission Package
 
-[ ] T153 [P0] Verify public repository readiness: license visible, README accurate, required docs linked, no secrets, no private evidence, no case workspaces. External gate: current folder is not a git repository, so the final public GitHub URL still must be created and checked.
+[x] T153 [P0] Verify public repository readiness: license visible, README accurate, required docs linked, no secrets, no private evidence, no case workspaces. Public GitHub repository verified at `https://github.com/AI-Nikitka93/find-evil-caseproof-analyst`.
 
 [ ] T154 [P0] Refresh Devpost rules before submission and confirm video visibility, required materials, deadline, and language requirements. Rules refreshed on 2026-05-07; video visibility remains external until upload.
 
@@ -165,7 +165,7 @@ bounded CASE-RD01 pass:
 
 - Full long-run autonomous AI investigation remains open; OpenRouter is the current working free/low-cost smoke-tested runtime path, while the local Groq key returned HTTP 403.
 - Event-log content, full timeline, and deeper registry correlation remain open; bounded SOFTWARE Run-key and SYSTEM service parsing now exists.
-- Public GitHub repository publication is not verified because this folder is not a git repository.
+- Public GitHub repository is verified at `https://github.com/AI-Nikitka93/find-evil-caseproof-analyst`.
 - Demo video is not recorded or uploaded.
 - Public video visibility and public GitHub diagram/link rendering are not verified.
 - Devpost form is not submitted with public links.

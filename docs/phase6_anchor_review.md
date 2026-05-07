@@ -43,6 +43,6 @@ Anchor OK. Продолжаем.
 
 ## Remaining Cross-Phase Blockers
 
-- SIFT-compatible runtime commands are missing locally.
-- Real CASE-RD01 SIFT validation is not complete.
-- Demo video, Devpost text, and public repository verification remain open.
+- Historical 2026-05-06 state: SIFT-compatible runtime commands were missing locally.
+- Historical 2026-05-06 state: Real CASE-RD01 SIFT validation was not complete.
+- Current 2026-05-07 state: runtime, bounded real validation, and public repository are verified; demo video and Devpost submission remain open.

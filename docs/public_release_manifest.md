@@ -91,10 +91,14 @@ rg -n "TODO|PLACEHOLDER|INSERT|your-key|sk-|gsk_|OPENROUTER_API_KEY=|GROQ_API_KE
 
 ## Current Publication Status
 
-Local public-release readiness can be checked. Actual GitHub publication cannot
-be verified from this folder because the current workspace is not a git
-repository. After creating the public repository, verify from a clean browser
-session that:
+Public repository verified on 2026-05-07:
+
+- `https://github.com/AI-Nikitka93/find-evil-caseproof-analyst`
+- Visibility: public
+- License: MIT
+- Default branch: `main`
+
+Before final Devpost submission, verify from a clean browser session that:
 
 - the repository is public;
 - the license is visible;
