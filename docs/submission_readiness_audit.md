@@ -2,7 +2,9 @@
 
 Date: 2026-05-07  
 Mode: local verification against project artifacts and live FIND EVIL submission needs  
-Verdict: **LOCAL PACKAGE PREPARED - external Devpost gates still block final submission**
+Verdict: **LOCAL PACKAGE GO - final Devpost submission remains NO-GO until public video and Devpost URLs exist**
+
+Canonical GO decision: `docs/final_go_decision_2026-05-07.md`.
 
 ## Verification Commands Run
 
@@ -21,7 +23,7 @@ Verdict: **LOCAL PACKAGE PREPARED - external Devpost gates still block final sub
 | `py scripts\generate_public_trace_packet.py --json --strict` | PASS, generated 10 public-safe real execution-log records including registry extraction, event extraction, bounded correlation, and self-correction |
 | `py scripts\demo_rehearsal.py --json --strict` | PASS, confirms demo script, public trace, local CASE-RD01 reports, real evidence opening, artifact-depth steps, and visible self-correction story |
 | `py scripts\audit_judge_readiness.py --write-doc --json --strict` | PASS, all six FIND EVIL judging criteria map to local `17/17` proof in `docs/judge_max_readiness_report.md`; external video/Devpost gates remain separate |
-| `py scripts\final_submission_audit.py --json` | BLOCKED as designed until public video URL, submitted Devpost URL, and clean public repo sync are all present; now also checks demo rehearsal assets, correlation summary, required local markdown links, and volatile freshness docs |
+| `py scripts\final_submission_audit.py --json` | BLOCKED as designed until public video URL and submitted Devpost URL are supplied; reports explicit `local_package`, `external_submission`, and `final_submission` GO decisions and checks public repo sync, demo rehearsal assets, correlation summary, required local markdown links, and volatile freshness docs |
 | `py scripts\audit_release_controls.py --json --strict` | PASS on last full gate run before this audit refresh |
 | `py scripts\audit_design_quality.py --strict` | PASS on last full gate run before this audit refresh |
 | `py scripts\audit_visual_package.py --strict` | PASS on last full gate run before this audit refresh |
@@ -79,6 +81,7 @@ Verdict: **LOCAL PACKAGE PREPARED - external Devpost gates still block final sub
 - GO for local public package preparation.
 - GO for local 17/17 judging-criteria proof mapping.
 - GO for showing a bounded real evidence pass honestly.
+- GO for recording the public terminal demo using `docs/demo_video_script.md`.
 - NO-GO for claiming full autonomous AI investigation completion.
 - NO-GO for claiming full incident reconstruction.
 - NO-GO for final Devpost submission until public video URL, Devpost form, and

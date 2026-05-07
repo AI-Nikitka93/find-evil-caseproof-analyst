@@ -32,6 +32,7 @@ REQUIRED_FILES = (
     "docs/reviewer_traceability_walkthrough.md",
     "docs/judging_17_readiness.md",
     "docs/judge_max_readiness_report.md",
+    "docs/final_go_decision_2026-05-07.md",
     "docs/freshness_dependency_register_2026-05-06.md",
     "docs/pre_release_freshness_checklist.md",
     "docs/volatile_notes_update_cycle.md",
@@ -306,12 +307,34 @@ def build_final_submission_audit(
         ),
     }
     blockers = [name for name, gate in {**local_gates, **external_gates}.items() if not gate.ok]
+    local_blockers = [name for name, gate in local_gates.items() if not gate.ok]
+    external_blockers = [name for name, gate in external_gates.items() if not gate.ok]
     total = len(local_gates) + len(external_gates)
     score = round(100 * (total - len(blockers)) / total)
+    go_decision = {
+        "local_package": "GO" if not local_blockers else "NO-GO",
+        "external_submission": "GO" if not external_blockers else "NO-GO",
+        "final_submission": "GO" if not blockers else "NO-GO",
+    }
+    next_actions: list[str] = []
+    if not git_status.ok:
+        next_actions.append("Clean and sync the public GitHub repository.")
+    for blocker in local_blockers:
+        if blocker == "public_repo_sync":
+            continue
+        next_actions.append(f"Fix local gate: {blocker}.")
+    if not external_gates["demo_video_url"].ok:
+        next_actions.append("Record and upload the public live-terminal demo video.")
+    if not external_gates["devpost_url"].ok:
+        next_actions.append("Submit the Devpost project and provide its public URL.")
+    if next_actions and not local_blockers:
+        next_actions.append("Run final_submission_audit.py with both URLs in --strict mode.")
     return {
         "status": "ready" if not blockers else "blocked",
         "score": score,
         "blockers": blockers,
+        "go_decision": go_decision,
+        "next_actions": next_actions,
         "local_gates": {name: asdict(gate) for name, gate in local_gates.items()},
         "external_gates": {name: asdict(gate) for name, gate in external_gates.items()},
         "public_repo_url": PUBLIC_REPO_URL,
@@ -335,11 +358,18 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps(report, indent=2, ensure_ascii=True))
     else:
         print(f"Final submission status: {report['status']} ({report['score']}/100)")
+        print("GO decision:")
+        for name, value in report["go_decision"].items():
+            print(f"  {name}: {value}")
         for group_name in ("local_gates", "external_gates"):
             print(group_name + ":")
             for name, gate in report[group_name].items():
                 marker = "PASS" if gate["ok"] else "BLOCK"
                 print(f"  {marker:5} {name} - {gate['detail']}")
+        if report["next_actions"]:
+            print("next_actions:")
+            for action in report["next_actions"]:
+                print(f"  - {action}")
     if args.strict and report["status"] != "ready":
         return 2
     return 0

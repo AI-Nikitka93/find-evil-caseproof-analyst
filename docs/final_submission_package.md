@@ -145,6 +145,7 @@ Next work is deeper content-level analysis:
 | Dataset documentation | `docs/dataset_documentation.md` |
 | Accuracy report | `docs/accuracy_report.md` |
 | Judge criteria proof | `docs/judge_max_readiness_report.md` shows all six judging criteria at local 17/17 proof level, while still separating the public video and Devpost URL gates. |
+| Final GO decision | `docs/final_go_decision_2026-05-07.md` states LOCAL GO and the remaining external gates. |
 | Agent execution logs | `docs/public_real_execution_log_sample.jsonl`, `docs/public_real_traceability_packet.md`, plus local full run log under `cases/CASE-RD01/` |
 | Text description | This document |
 
@@ -158,6 +159,9 @@ Next work is deeper content-level analysis:
 - Regenerate the local judge scorecard with `py scripts\audit_judge_readiness.py --write-doc --strict`; it must show all six criteria at `17/17`.
 - Run `py scripts\demo_rehearsal.py --strict` before recording and use its
   command sequence for the live terminal screencast.
+- Confirm `py scripts\final_submission_audit.py --json` reports
+  `local_package: GO` before recording; if it reports local `NO-GO`, fix that
+  local gate before touching Devpost.
 - Confirm the video shows the same behavior described here.
 - Run the final 100-point gate after the video and Devpost page exist:
 

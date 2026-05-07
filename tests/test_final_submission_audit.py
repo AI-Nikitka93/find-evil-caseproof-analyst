@@ -58,6 +58,12 @@ def _write_minimum_package(root: Path) -> None:
         "External submission gate\n",
         encoding="utf-8",
     )
+    (root / "docs" / "final_go_decision_2026-05-07.md").write_text(
+        "# Final GO Decision\n"
+        "LOCAL GO\n"
+        "FINAL SUBMISSION GO only after public video URL and submitted Devpost URL.\n",
+        encoding="utf-8",
+    )
     (root / "docs" / "demo_video_script.md").write_text(
         "live terminal execution\nreal evidence\nself-correction sequence\ntraceability chain\n",
         encoding="utf-8",
@@ -102,6 +108,12 @@ def test_final_submission_audit_passes_when_external_urls_and_git_sync_are_ready
     assert report["status"] == "ready"
     assert report["score"] == 100
     assert report["blockers"] == []
+    assert report["go_decision"] == {
+        "local_package": "GO",
+        "external_submission": "GO",
+        "final_submission": "GO",
+    }
+    assert report["next_actions"] == []
     assert report["external_gates"]["demo_video_url"]["ok"] is True
     assert report["external_gates"]["devpost_url"]["ok"] is True
 
@@ -121,6 +133,36 @@ def test_final_submission_audit_blocks_missing_demo_and_dirty_git(tmp_path: Path
     assert "demo_video_url" in report["blockers"]
     assert "devpost_url" in report["blockers"]
     assert "public_repo_sync" in report["blockers"]
+    assert report["go_decision"]["local_package"] == "NO-GO"
+    assert report["go_decision"]["external_submission"] == "NO-GO"
+    assert report["go_decision"]["final_submission"] == "NO-GO"
+    assert "Clean and sync the public GitHub repository." in report["next_actions"]
+    assert "Record and upload the public live-terminal demo video." in report["next_actions"]
+    assert "Submit the Devpost project and provide its public URL." in report["next_actions"]
+
+
+def test_final_submission_audit_reports_local_go_when_only_external_urls_are_missing(tmp_path: Path) -> None:
+    _write_minimum_package(tmp_path)
+
+    report = final_submission_audit.build_final_submission_audit(
+        root=tmp_path,
+        demo_video_url=None,
+        devpost_url=None,
+        git_status=final_submission_audit.GitSyncStatus(ok=True, detail="clean and synced"),
+    )
+
+    assert report["status"] == "blocked"
+    assert report["go_decision"] == {
+        "local_package": "GO",
+        "external_submission": "NO-GO",
+        "final_submission": "NO-GO",
+    }
+    assert report["blockers"] == ["demo_video_url", "devpost_url"]
+    assert report["next_actions"] == [
+        "Record and upload the public live-terminal demo video.",
+        "Submit the Devpost project and provide its public URL.",
+        "Run final_submission_audit.py with both URLs in --strict mode.",
+    ]
 
 
 def test_final_submission_audit_blocks_when_demo_assets_do_not_prove_correction(tmp_path: Path) -> None:
@@ -170,6 +212,21 @@ def test_final_submission_audit_blocks_missing_correlation_summary(tmp_path: Pat
 
     assert report["status"] == "blocked"
     assert "correlation_summary" in report["blockers"]
+
+
+def test_final_submission_audit_requires_final_go_decision_document(tmp_path: Path) -> None:
+    _write_minimum_package(tmp_path)
+    (tmp_path / "docs" / "final_go_decision_2026-05-07.md").unlink()
+
+    report = final_submission_audit.build_final_submission_audit(
+        root=tmp_path,
+        demo_video_url="https://youtu.be/example12345",
+        devpost_url="https://devpost.com/software/caseproof-analyst",
+        git_status=final_submission_audit.GitSyncStatus(ok=True, detail="clean and synced"),
+    )
+
+    assert report["status"] == "blocked"
+    assert "required_files" in report["blockers"]
 
 
 def test_final_submission_audit_blocks_stale_freshness_docs(tmp_path: Path) -> None:

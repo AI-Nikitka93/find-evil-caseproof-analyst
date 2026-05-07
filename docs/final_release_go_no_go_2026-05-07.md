@@ -1,8 +1,10 @@
 # Final Release Go/No-Go Board
 
 Date: 2026-05-07  
-Current decision: **NO-GO for Devpost submission until video and Devpost
-steps are complete; GO for public repository package.**
+Current decision: **LOCAL PACKAGE GO; FINAL DEVPOST SUBMISSION NO-GO until the
+public demo video URL and submitted Devpost URL exist.**
+
+Canonical decision file: `docs/final_go_decision_2026-05-07.md`.
 
 ## Current Go Items
 
@@ -26,8 +28,9 @@ steps are complete; GO for public repository package.**
 | Judge runbook exists | GO | `docs/judge_try_it_out.md` |
 | Judging readiness map exists | GO | `docs/judging_17_readiness.md` |
 | Judge max readiness report exists | GO | `docs/judge_max_readiness_report.md` shows all six criteria at local 17/17 proof level |
+| Final GO decision exists | GO | `docs/final_go_decision_2026-05-07.md` separates LOCAL GO from external submission gates |
 | Public GitHub URL | GO | https://github.com/AI-Nikitka93/find-evil-caseproof-analyst |
-| Final submission audit exists | GO | `scripts/final_submission_audit.py --json` |
+| Final submission audit exists | GO | `scripts/final_submission_audit.py --json` now reports `local_package`, `external_submission`, and `final_submission` decisions |
 
 ## Current No-Go Items
 
@@ -51,8 +54,14 @@ py scripts\audit_judge_readiness.py --write-doc --strict
 py scripts\final_submission_audit.py --demo-video-url VIDEO_URL --devpost-url DEVPOST_URL --strict
 ```
 
-The command must reach `ready (100/100)` before final submission is treated as
-complete.
+The command must reach `ready (100/100)` and print these decisions before final
+submission is treated as complete:
+
+```text
+local_package: GO
+external_submission: GO
+final_submission: GO
+```
 
 ## Accepted Limitations
 

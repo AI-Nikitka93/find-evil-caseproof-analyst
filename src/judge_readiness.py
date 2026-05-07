@@ -230,6 +230,24 @@ def build_judge_readiness_report(
     ]
     score_map = {assessment.criterion: assessment.score for assessment in assessments}
     submission_blockers = _submission_blockers_without_bootstrap_self_reference(final_audit)
+    adjusted_local_blockers = [name for name in submission_blockers if name in final_audit.get("local_gates", {})]
+    adjusted_external_blockers = [name for name in submission_blockers if name in final_audit.get("external_gates", {})]
+    total_submission_gates = len(final_audit.get("local_gates", {})) + len(final_audit.get("external_gates", {}))
+    adjusted_score = (
+        round(100 * (total_submission_gates - len(submission_blockers)) / total_submission_gates)
+        if total_submission_gates
+        else final_audit["score"]
+    )
+    adjusted_go_decision = {
+        "local_package": "GO" if not adjusted_local_blockers else "NO-GO",
+        "external_submission": "GO" if not adjusted_external_blockers else "NO-GO",
+        "final_submission": "GO" if not submission_blockers else "NO-GO",
+    }
+    adjusted_next_actions = [
+        action
+        for action in final_audit.get("next_actions", [])
+        if action not in {"Fix local gate: required_files.", "Fix local gate: judge_max_readiness_report."}
+    ]
     return {
         "status": "max_local_judge_ready" if all(score == 17 for score in score_map.values()) else "needs_work",
         "criterion_score_summary": {
@@ -241,8 +259,10 @@ def build_judge_readiness_report(
         "criteria": [asdict(assessment) for assessment in assessments],
         "submission_gate": {
             "status": "ready" if not submission_blockers else "blocked",
-            "score": final_audit["score"],
+            "score": adjusted_score,
             "blockers": submission_blockers,
+            "go_decision": adjusted_go_decision,
+            "next_actions": adjusted_next_actions,
             "external_gates": final_audit["external_gates"],
         },
         "boundary": (
@@ -277,7 +297,21 @@ def render_judge_readiness_markdown(report: dict[str, Any]) -> str:
             "",
             f"Status: **{report['submission_gate']['status']}**",
             f"Score: **{report['submission_gate']['score']}/100**",
+            "",
+            "## GO decision",
+            "",
+            f"Local package: **{report['submission_gate'].get('go_decision', {}).get('local_package', 'UNKNOWN')}**",
+            f"External submission: **{report['submission_gate'].get('go_decision', {}).get('external_submission', 'UNKNOWN')}**",
+            f"Final submission: **{report['submission_gate'].get('go_decision', {}).get('final_submission', 'UNKNOWN')}**",
+            "",
             "Blockers: " + (", ".join(report["submission_gate"]["blockers"]) if report["submission_gate"]["blockers"] else "None"),
+            "",
+            "Next actions: "
+            + (
+                "; ".join(report["submission_gate"].get("next_actions", []))
+                if report["submission_gate"].get("next_actions")
+                else "None"
+            ),
             "",
             "## Boundary",
             "",

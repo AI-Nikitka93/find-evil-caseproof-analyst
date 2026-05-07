@@ -41,6 +41,12 @@ def _write_package(root: Path) -> None:
         "autonomous_smoke_hardening_2026-05-07.md",
     ):
         (docs / name).write_text("evidence trace self-correction\n", encoding="utf-8")
+    (docs / "final_go_decision_2026-05-07.md").write_text(
+        "# Final GO Decision\n"
+        "LOCAL GO\n"
+        "FINAL SUBMISSION GO only after video and Devpost URLs.\n",
+        encoding="utf-8",
+    )
     freshness_text = (
         "Checked: 2026-05-07\n"
         "base-rd-01-cdrive.E01\n"
@@ -149,4 +155,6 @@ def test_render_judge_readiness_markdown_includes_external_boundary(tmp_path: Pa
     assert "# Judge Max Readiness Report" in markdown
     assert "17/17" in markdown
     assert "External submission gate" in markdown
+    assert "Local package: **GO**" in markdown
+    assert "Final submission: **NO-GO**" in markdown
     assert "demo_video_url" in markdown
