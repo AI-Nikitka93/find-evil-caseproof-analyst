@@ -20,7 +20,16 @@ All criteria at 17/17: **true**
 
 Status: **blocked**
 Score: **83/100**
+
+## GO decision
+
+Local package: **GO**
+External submission: **NO-GO**
+Final submission: **NO-GO**
+
 Blockers: demo_video_url, devpost_url
+
+Next actions: Record and upload the public live-terminal demo video.; Submit the Devpost project and provide its public URL.; Run final_submission_audit.py with both URLs in --strict mode.
 
 ## Boundary
 
